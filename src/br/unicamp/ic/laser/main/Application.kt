@@ -129,8 +129,8 @@ fun ssic(structuredOperations: HashMap<String, MutableSet<String>>): Double {
         val op2 = structuredOperations[pair[1]]
 
         // structured.entries.dup
-        val size = op1!!.intersect(op2!!)
-        size.forEach { intersectMutableList.add(it) }
+        val intersectTypesIntoOperation = op1!!.intersect(op2!!)
+        intersectTypesIntoOperation.forEach { intersectMutableList.add(it) }
     }
 
     return (intersectMutableList.size/(sizeOfUnionSet * 1.0))
