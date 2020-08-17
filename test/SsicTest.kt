@@ -27,6 +27,22 @@ class SsicTest {
     }
 
     @Test
+    fun should_calc_two_services2() {
+        // double using are not acceptable
+        val serviceA = mutableSetOf("Apple", "Banana", "Banana", "Throwable")
+        val serviceB = mutableSetOf("Banana", "Throwable", "Fruit")
+
+        val struct = HashMap<String, MutableSet<String>>()
+        struct.put("Service::A", serviceA)
+        struct.put("Service::B", serviceB)
+
+        val result = ssic(struct)
+
+        Assert.assertNotNull(result)
+        Assert.assertEquals(1/6.0, result, 0.0)
+    }
+
+    @Test
     fun should_calc_two_services1() {
         val serviceA = mutableSetOf("Apple", "Banana")
         val serviceB = mutableSetOf("Coconut")
