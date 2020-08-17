@@ -23,7 +23,7 @@ class SsicTest {
         val result = ssic(struct)
 
         Assert.assertNotNull(result)
-        Assert.assertEquals(1/6.0, result, 0.0)
+        Assert.assertEquals(0.5, result, 0.0)
     }
 
     @Test
@@ -39,7 +39,7 @@ class SsicTest {
         val result = ssic(struct)
 
         Assert.assertNotNull(result)
-        Assert.assertEquals(1/6.0, result, 0.0)
+        Assert.assertEquals(0.5, result, 0.0)
     }
 
     @Test
@@ -73,7 +73,7 @@ class SsicTest {
         val result = ssic(struct)
 
         Assert.assertNotNull(result)
-        Assert.assertEquals(0.2, result, 0.0)
+        Assert.assertEquals(0.8, result, 0.0)
     }
 
     @Test
