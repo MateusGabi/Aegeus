@@ -75,4 +75,19 @@ class SsicTest {
         Assert.assertNotNull(result)
         Assert.assertEquals(0.2, result, 0.0)
     }
+
+    @Test
+    fun example_figure_6_from_article() {
+        val serviceA = mutableSetOf("A", "B", "C", "D")
+        val serviceB = mutableSetOf("A", "B", "C", "D")
+
+        val struct = HashMap<String, MutableSet<String>>()
+        struct.put("Service::A", serviceA)
+        struct.put("Service::B", serviceB)
+
+        val result = ssic(struct)
+
+        Assert.assertEquals(1.0, result, 0.0)
+
+    }
 }

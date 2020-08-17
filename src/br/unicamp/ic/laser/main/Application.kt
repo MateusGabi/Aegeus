@@ -127,9 +127,12 @@ fun ssic(structuredOperations: HashMap<String, MutableSet<String>>): Double {
         return 0.0
     }
 
-    val sizeOfUnionSet = structuredOperations.entries.map {
-        it.value.size
-    }.reduce { acc, i -> acc + i}
+    val m = mutableSetOf<String>()
+    structuredOperations.entries.map {
+        entry -> m.addAll(entry.value)
+    }
+
+    val sizeOfUnionSet = (m.size)
 
     val numberOfOperations = structuredOperations.entries.size
 
@@ -143,12 +146,13 @@ fun ssic(structuredOperations: HashMap<String, MutableSet<String>>): Double {
         val op1 = structuredOperations[pair[0]]
         val op2 = structuredOperations[pair[1]]
 
-        // structured.entries.dup
         val intersectTypesIntoOperation = op1!!.intersect(op2!!)
         intersectTypesIntoOperation.forEach { intersectMutableList.add(it) }
     }
 
-    return (intersectMutableList.size/(sizeOfUnionSet * 1.0 * numberOfOperations))
+    // multiplica por dois porque é o conjunto de pares, então tanto a ida como a volta
+    // ex: (Service::A-Service::B e Service::B-Service::A) contam.
+    return (intersectMutableList.size * 2.0 / (sizeOfUnionSet * numberOfOperations))
 }
 
 fun main() {
