@@ -90,4 +90,21 @@ class SsicTest {
         Assert.assertEquals(1.0, result, 0.0)
 
     }
+
+    @Test
+    fun example_figure_5_from_article() {
+        val serviceA = mutableSetOf("I", "B", "E")
+        val serviceB = mutableSetOf("A", "B", "C", "D", "E", "F")
+        val serviceC = mutableSetOf("H", "G", "F")
+
+        val struct = HashMap<String, MutableSet<String>>()
+        struct.put("EnrollStudent::getLibraryClearance", serviceA)
+        struct.put("EnrollStudent::checkPrerequisiteCourses", serviceB)
+        struct.put("EnrollStudent::enrollStudentIntoCourse", serviceC)
+
+        val result = ssic(struct)
+
+        Assert.assertEquals(6/(3.0*9), result, 0.0)
+
+    }
 }
