@@ -8,7 +8,7 @@ interface IHandler<T> {
     fun handle(request: T): T
 }
 
-abstract class BaseHandler<T>: IHandler<T> {
+abstract class BaseHandler<T> : IHandler<T> {
     internal var iHandler: IHandler<T>? = null
 
     override fun setNext(next: IHandler<T>) {
@@ -32,7 +32,7 @@ class RemoveEmptySpacesHandler : BaseHandler<String>() {
     }
 }
 
-class RemoveCommasHandler: BaseHandler<String>() {
+class RemoveCommasHandler : BaseHandler<String>() {
     override fun handle(request: String): String {
         val newString = request.replace(",", "")
         if (this.iHandler == null) {
@@ -76,9 +76,9 @@ fun transformListIntoBasketOfOperations(list: MutableList<String>): HashMap<Stri
 
     var lastOperationName: String? = null
 
-    list.forEach {statement ->
+    list.forEach { statement ->
 
-        when(whichKindOfStatementIs(statement)) {
+        when (whichKindOfStatementIs(statement)) {
             Statements.OPERATION_NAME -> {
                 lastOperationName = statement
                 structured[lastOperationName!!] = mutableSetOf()
@@ -95,7 +95,7 @@ fun transformListIntoBasketOfOperations(list: MutableList<String>): HashMap<Stri
     return structured
 }
 
-fun <T>pairs(list: List<T>): List<List<T>> {
+fun <T> pairs(list: List<T>): List<List<T>> {
     val size = list.size
     val mutableList = mutableListOf<List<T>>()
 
@@ -123,13 +123,13 @@ fun <T>pairs(list: List<T>): List<List<T>> {
  */
 fun ssic(structuredOperations: HashMap<String, MutableSet<String>>): Double {
 
-    if (structuredOperations.size == 0 ) {
+    if (structuredOperations.size == 0) {
         return 0.0
     }
 
     val m = mutableSetOf<String>()
-    structuredOperations.entries.map {
-        entry -> m.addAll(entry.value)
+    structuredOperations.entries.map { entry ->
+        m.addAll(entry.value)
     }
 
     val sizeOfUnionSet = (m.size)
