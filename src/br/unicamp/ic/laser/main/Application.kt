@@ -108,6 +108,19 @@ fun <T>pairs(list: List<T>): List<List<T>> {
     return mutableList
 }
 
+/**
+ * Measurement Procedure: The measurement procedure consists of two steps.
+ * Firstly, the chain of calls (which is defined as collaboration sequence
+ * (cs) in section 4.1) is traced in order to determine the set of
+ * implementation elements invoked in response to the invocation of each of
+ * the service operations. Next, all the collaboration sequence sets are
+ * intersected in a pair-wise manner and the intersected elements (represented
+ * by black ovals in Figure 5) are placed in the overall intersected set
+ * (duplicates are allowed). The cardinality of this set is then divided by the
+ * total number of service elements multiplied by total number of operations.
+ *
+ * SSIC (s) = |IC(s)| / (|(BPSs U CsU IsU PsU Hs)| * | SO(sis )|)
+ */
 fun ssic(structuredOperations: HashMap<String, MutableSet<String>>): Double {
 
     if (structuredOperations.size == 0 ) {
