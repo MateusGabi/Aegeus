@@ -55,7 +55,7 @@ fun sanitizationLine(line: String): String {
 }
 
 enum class Statements {
-    OPERATION_NAME, OPERATION_USE_OF_TYPE, BLANK
+    OPERATION_NAME, OPERATION_USE_OF_TYPE, OPERATION_PARAM, BLANK
 }
 
 fun readFileLines(filePath: String): List<String> = File(filePath).readLines()
@@ -67,6 +67,8 @@ fun whichKindOfStatementIs(line: String): Statements {
         return Statements.OPERATION_NAME
     } else if (line == "") {
         return Statements.BLANK
+    } else if (line.startsWith("*")) {
+        return Statements.OPERATION_PARAM
     }
     return Statements.OPERATION_USE_OF_TYPE
 }
@@ -87,6 +89,9 @@ fun transformListIntoBasketOfOperations(list: MutableList<String>): HashMap<Stri
                 structured[lastOperationName!!]!!.add(statement)
             }
             Statements.BLANK -> {
+                // NO ACTION
+            }
+            Statements.OPERATION_PARAM -> {
                 // NO ACTION
             }
         }
@@ -157,7 +162,8 @@ fun ssic(structuredOperations: HashMap<String, MutableSet<String>>): Double {
 
 fun main() {
     println("Starting script")
-    val filePath = "/home/mgm/Downloads/SiteWhere - batch-operations (copy).txt"
+    val a = "/home/mgm/Documents/Unicamp/Master/analysis/sitewhere/in/"
+    val filePath = "${a}label-generation-service.7ce7cac632a46847b9a24d97e796ca5967ed6ac7.txt"
 
     val lines = readFileLines(filePath)
 

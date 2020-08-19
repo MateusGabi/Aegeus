@@ -45,4 +45,11 @@ class KindOfStatementTest {
         val expect = Statements.BLANK
         Assert.assertEquals(expect,result)
     }
+
+    @Test
+    fun should_get_operaation_param() {
+        val result = whichKindOfStatementIs("*String")
+        val expect = Statements.OPERATION_PARAM
+        Assert.assertEquals(expect, result)
+    }
 }
