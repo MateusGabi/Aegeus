@@ -160,6 +160,39 @@ fun ssic(structuredOperations: HashMap<String, MutableSet<String>>): Double {
     return (intersectMutableList.size * 2.0 / (sizeOfUnionSet * numberOfOperations))
 }
 
+/**
+ * The measurement procedure consists of comparing the sets of parameter types for each
+ * service operation so∈ SO (sis) in a pair-wise manner, and then placing the operations
+ * with common parameter types into a set of Common operations. The cardinality of this
+ * set is then divided by a total number of discrete parameter types for this service.
+ *
+ * SIDC (s) = |Common(Param(so ∈ SO(sis )| / totalParamTypes
+ */
+fun sidc(structuredOperations: HashMap<String, MutableSet<String>>): Double {
+
+    if (structuredOperations.size == 0) {
+        return 0.0
+    }
+
+    val a = mutableSetOf<String>()
+    structuredOperations.entries.forEach { operations ->
+        a.addAll(operations.value)
+    }
+    val totalOfParamsType = a.size
+
+    val commonParamTypesSet = mutableSetOf<String>()
+    val pairsOfOperations = pairs(structuredOperations.keys.toList())
+    pairsOfOperations.forEach { pair ->
+        val p1 = structuredOperations[pair[0]]
+        val p2 = structuredOperations[pair[1]]
+
+        val intersectionSet = p1!!.intersect(p2!!)
+        intersectionSet.forEach { commonParamTypesSet.add(it) }
+    }
+
+    return commonParamTypesSet.size / (totalOfParamsType * 1.0)
+}
+
 fun main() {
     println("Starting script")
     val a = "/home/mgm/Documents/Unicamp/Master/analysis/sitewhere/in/"
@@ -175,6 +208,4 @@ fun main() {
     val ssic = ssic(structured)
 
     println("ssic -> $ssic")
-
-
 }
