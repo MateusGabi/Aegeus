@@ -100,6 +100,32 @@ fun transformListIntoBasketOfOperations(list: MutableList<String>): HashMap<Stri
     return structured
 }
 
+fun transformListIntoBasketOfParams(list: MutableList<String>): HashMap<String, MutableSet<String>> {
+    val structured = HashMap<String, MutableSet<String>>()
+
+    var lastOperationName: String? = null
+
+    list.forEach { statement ->
+        when (whichKindOfStatementIs(statement)) {
+            Statements.OPERATION_NAME -> {
+                lastOperationName = statement
+                structured[lastOperationName!!] = mutableSetOf()
+            }
+            Statements.OPERATION_USE_OF_TYPE -> {
+                // NO ACTION
+            }
+            Statements.BLANK -> {
+                // NO ACTION
+            }
+            Statements.OPERATION_PARAM -> {
+                structured[lastOperationName!!]!!.add(statement)
+            }
+        }
+    }
+
+    return structured
+}
+
 fun <T> pairs(list: List<T>): List<List<T>> {
     val size = list.size
     val mutableList = mutableListOf<List<T>>()
@@ -208,4 +234,7 @@ fun main() {
     val ssic = ssic(structured)
 
     println("ssic -> $ssic")
+
+    val sd = sidc(transformListIntoBasketOfParams(sanitizedLines.toMutableList()))
+    println("sidc -> $sd")
 }
