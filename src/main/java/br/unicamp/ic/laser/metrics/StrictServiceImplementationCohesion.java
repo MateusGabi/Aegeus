@@ -47,33 +47,18 @@ public class StrictServiceImplementationCohesion implements IMetric {
 			return new Double(0.0);
 		}
 		
-		Stream<Operation> operationStream = operations.stream();
-		Stream usingTypesOfAllOperationsStream = operationStream.map(operation -> {
-			return operation.getUsingTypesList();
-		});
+		List<String> uniqueUsingTypes = operations
+				.stream()
+				.map(o -> o.getUsingTypesList())
+				.flatMap(x -> x.stream())
+				.distinct()
+				.collect(Collectors.toList());
 		
-		List aaaa = (List) usingTypesOfAllOperationsStream.collect(Collectors.toList());
-		
-		ArrayList<String> uniqueTypes = Stream.of(aaaa).reduce(new ArrayList(), (acc, in) -> {
-			acc.addAll(in);
-			return acc;
-		});
-		
-		System.out.println(aaaa);
-//	    
-//	    for (Object object : a) {			
-//	    	System.out.println(object.toString());
-//		}
-	    
-	    
-	    return null;
+		int ammount = uniqueUsingTypes.size();
+	    int numberOfOperations = operations.size();
 
-//	    val sizeOfUnionSet = (m.size)
-//
-//	    val numberOfOperations = structuredOperations.entries.size
-//
-//	    // return pairs of operation names
-//	    val pairsOfKeys = pairs(structuredOperations.keys.toList())
+	    // return pairs of operation names
+	    val pairsOfKeys = pairs(structuredOperations.keys.toList())
 //
 //	    // list of architectural elements
 //	    val intersectMutableList = mutableListOf<String>()
@@ -89,6 +74,8 @@ public class StrictServiceImplementationCohesion implements IMetric {
 //	    // multiplica por dois porque é o conjunto de pares, então tanto a ida como a volta
 //	    // ex: (Service::A-Service::B e Service::B-Service::A) contam.
 //	    return (intersectMutableList.size * 2.0 / (sizeOfUnionSet * numberOfOperations))
+		
+		return null;
 		
 	}
 
