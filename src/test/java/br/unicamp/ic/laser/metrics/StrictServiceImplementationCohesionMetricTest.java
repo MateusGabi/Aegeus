@@ -162,7 +162,7 @@ public class StrictServiceImplementationCohesionMetricTest {
 		typesOfOperationsServiceD.add("Apple");
 		typesOfOperationsServiceD.add("Throwable");
 
-		operationServiceB.setUsingTypesList(typesOfOperationsServiceD);
+		operationServiceD.setUsingTypesList(typesOfOperationsServiceD);
 
 		// Defining operations
 		ArrayList<Operation> operations = new ArrayList<Operation>();
@@ -176,7 +176,7 @@ public class StrictServiceImplementationCohesionMetricTest {
 		Double actual = new StrictServiceImplementationCohesion().evaluate(serviceDescriptor);
 
 		Assert.assertNotNull(actual);
-		Assert.assertEquals(0.8, actual, 0.0);
+		Assert.assertEquals(0.3, actual, 0.0);
 	}
 
 	@Test
