@@ -1,5 +1,6 @@
 package br.unicamp.ic.laser.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Operation {
@@ -8,7 +9,15 @@ public class Operation {
 	private List<String> paramList;
 	private List<String> usingTypesList;
 	private String responseType;
-	
+
+	public Operation() {
+		this.path = null;
+		this.name = "OperationDefaultName";
+		this.paramList = new ArrayList<>();
+		this.usingTypesList = new ArrayList<>();
+		this.responseType = "UNDEFINED";
+	}
+
 	public String getPath() {
 		return path;
 	}
