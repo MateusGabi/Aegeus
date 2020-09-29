@@ -4,8 +4,11 @@
 package br.unicamp.ic.laser.metrics;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import br.unicamp.ic.laser.model.Operation;
 import br.unicamp.ic.laser.model.ServiceDescriptor;
@@ -43,15 +46,16 @@ public class StrictServiceImplementationCohesion implements IMetric {
 
 		int intersectTypesSize = Utils
 				.pairs(operations.stream().map(o -> o.getUsingTypesList()).collect(Collectors.toList())).stream()
-				.reduce(new ArrayList(), (acc, pair) -> {
+				.map((pair) -> {
 					List<String> typesIntoFirstOperation = pair.get(0);
 					List<String> typesIntoSecondOperation = pair.get(1);
 
 					List<String> intersectElements = typesIntoFirstOperation.stream()
 							.filter(typesIntoSecondOperation::contains).collect(Collectors.toList());
-					acc.add(intersectElements);
-					return acc;
-				}).size();
+
+					return intersectElements;
+				}).flatMap(types -> types.stream())
+				.collect(Collectors.toSet()).size();
 
 		// multiplica por dois porque é o conjunto de pares, então tanto a ida como a
 		// volta
