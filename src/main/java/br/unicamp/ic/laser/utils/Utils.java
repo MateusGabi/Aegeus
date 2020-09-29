@@ -1,26 +1,23 @@
 package br.unicamp.ic.laser.utils;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 
 public class Utils {
-	public static ArrayList<ArrayList<String>> pairs(List<String> list) {
+	public static <T> ArrayList<ArrayList<T>> pairs(List<T> list) {
 		int size = list.size();
-		ArrayList<ArrayList<String>> returned = new ArrayList<ArrayList<String>>();
-		
+		ArrayList<ArrayList<T>> returned = new ArrayList<ArrayList<T>>();
+
 		for (int i = 0; i < size; i++) {
 			for (int j = i + 1; j < size; j++) {
-				ArrayList<String> l = new ArrayList<String>();
+				ArrayList<T> l = new ArrayList<T>();
 				l.add(list.get(i));
 				l.add(list.get(j));
-				
+
 				returned.add(l);
 			}
 		}
-		
-		return returned;		
+
+		return returned;
 	}
 }
