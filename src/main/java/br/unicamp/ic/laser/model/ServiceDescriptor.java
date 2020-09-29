@@ -1,11 +1,9 @@
 package br.unicamp.ic.laser.model;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import br.unicamp.ic.laser.readers.TextFileServiceDescriptorBuilder;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
 
 
 /**
@@ -28,7 +26,7 @@ public class ServiceDescriptor implements IServiceDescriptor {
 			this.serviceDescriptorBuilder = new TextFileServiceDescriptorBuilder();
 		}
 
-		public ServiceDescriptor build(String file) {
+		public IServiceDescriptor build(String file) {
 			return this.serviceDescriptorBuilder.build(file);
 		}
 	}
@@ -57,22 +55,17 @@ public class ServiceDescriptor implements IServiceDescriptor {
 	@Override
 	public List<Operation> getServiceOperations() {
 		return serviceOperations;
-	}	
-	
-}
-
-class TextFileServiceDescriptorBuilder implements IServiceDescriptorBuilder {
+	}
 
 	@Override
-	public ServiceDescriptor build(String fileName) {
-		ServiceDescriptor serviceDescriptor = new ServiceDescriptor();
-
-		try (Stream<String> stream = Files.lines(Paths.get(fileName))) {
-			stream.forEach(System.out::println);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		return serviceDescriptor;
+	public void setServiceName(String name) {
+		this.serviceName = name;
 	}
+
+	@Override
+	public void setServiceOperations(List<Operation> serviceOperations) {
+		this.serviceOperations = serviceOperations;
+	}
+
 }
+

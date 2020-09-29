@@ -57,5 +57,15 @@ public class Operation {
 	public void setResponseType(String responseType) {
 		this.responseType = responseType;
 	}
-	
+
+	@Override
+	protected Object clone() throws CloneNotSupportedException {
+		Operation op = new Operation();
+		op.setName(this.name);
+		op.setParamList(this.paramList);
+		op.setUsingTypesList(this.usingTypesList);
+		op.setPath(this.path);
+		op.setResponseType(this.responseType);
+		return op;
+	}
 }
