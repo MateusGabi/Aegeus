@@ -2,6 +2,7 @@ package br.unicamp.ic.laser.model;
 
 import br.unicamp.ic.laser.readers.TextFileServiceDescriptorBuilder;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +27,7 @@ public class ServiceDescriptor implements IServiceDescriptor {
 			this.serviceDescriptorBuilder = new TextFileServiceDescriptorBuilder();
 		}
 
-		public IServiceDescriptor build(String file) {
+		public IServiceDescriptor build(String file) throws IOException {
 			return this.serviceDescriptorBuilder.build(file);
 		}
 	}

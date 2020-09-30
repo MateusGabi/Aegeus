@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import br.unicamp.ic.laser.model.Operation;
-import br.unicamp.ic.laser.model.ServiceDescriptor;
+import br.unicamp.ic.laser.model.IServiceDescriptor;
 import br.unicamp.ic.laser.utils.Utils;
 
 /**
@@ -31,7 +31,7 @@ import br.unicamp.ic.laser.utils.Utils;
  */
 public class StrictServiceImplementationCohesion implements IMetric {
 
-	public Double evaluate(ServiceDescriptor serviceDescriptor) {
+	public Double evaluate(IServiceDescriptor serviceDescriptor) {
 
 		List<Operation> operations = serviceDescriptor.getServiceOperations();
 
