@@ -1,8 +1,10 @@
 package br.unicamp.ic.laser.main;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
+import br.unicamp.ic.laser.metrics.ServiceInterfaceDataCohesion;
 import br.unicamp.ic.laser.metrics.StrictServiceImplementationCohesion;
 import br.unicamp.ic.laser.model.IServiceDescriptor;
 import br.unicamp.ic.laser.model.IServiceDescriptorBuilder;
@@ -17,14 +19,24 @@ public class Main {
         System.out.println("Starting application");
 
         ServiceDescriptor.Builder serviceDescriptorBuilder = new ServiceDescriptor.Builder();
-        IServiceDescriptor serviceDescriptor = serviceDescriptorBuilder.build(FILE_PATH);
+        IServiceDescriptor serviceDescriptor = null;
+        try {
+            serviceDescriptor = serviceDescriptorBuilder.build(FILE_PATH);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         System.out.println("Service Name: " + serviceDescriptor.getServiceName());
 
-        System.out.println(serviceDescriptor.getServiceOperations().size());
+        System.out.println("Operations: " + serviceDescriptor.getServiceOperations().size());
 
-        serviceDescriptor.getServiceOperations().forEach(operation -> {
-            System.out.println("Operation name: " + operation.getName());
-        });
+//        serviceDescriptor.getServiceOperations().forEach(operation -> {
+//            System.out.println("Operation name: " + operation.getName());
+//            System.out.println("Params: " + operation.getParamList());
+//            System.out.println("Types: " + operation.getUsingTypesList());
+//        });
+
+        System.out.println("ServiceInterfaceDataCohesion: " + new ServiceInterfaceDataCohesion().evaluate(serviceDescriptor));
+        System.out.println("StrictServiceImplementationCohesion: " + new StrictServiceImplementationCohesion().evaluate(serviceDescriptor));
     }
 }

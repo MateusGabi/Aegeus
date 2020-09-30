@@ -8,52 +8,57 @@ import br.unicamp.ic.laser.model.Statements;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
 import java.util.stream.Stream;
 
 public class TextFileServiceDescriptorBuilder implements IServiceDescriptorBuilder {
 
     @Override
-    public ServiceDescriptor build(String fileName) {
+    public ServiceDescriptor build(String fileName) throws IOException {
         ServiceDescriptor serviceDescriptor = new ServiceDescriptor();
 
         try (Stream<String> stream = Files.lines(Paths.get(fileName))) {
-            List<String> statements = stream
-                    .map(str -> str.replace(" ", "")) // remove blank spaces
-                    .map(str -> str.replace(",", "")) // remove commas
-                    .collect(Collectors.toList());
 
-            Operation lastOperation = new Operation();
-            for (int i = 0; i < statements.size(); i++) {
-                String statement = statements.get(i);
+            // i need this variable to know which operation it is add params and types;
+            ArrayList<Integer> arrayOfOperationsIndex = new ArrayList<>();
+            stream
+                    .map(this::sanitize)
+                    .forEach((statement) -> {
+                        Statements statementKind = whichKindOfStatementIs(statement);
 
-                switch (whichKindOfStatementIs(statement)) {
-                    case OPERATION_NAME:
-                        lastOperation.setName(statement);
-                        break;
-                    case OPERATION_USE_OF_TYPE:
-                        lastOperation.getUsingTypesList().add(statement);
-                        break;
-                    case SERVICE_NAME:
-                        serviceDescriptor.setServiceName(statement);
-                        break;
-                    case BLANK:
-                        serviceDescriptor.getServiceOperations().add();
-                        lastOperation = new Operation();
-                        break;
-                    case OPERATION_PARAM:
-                        lastOperation.getParamList().add(statement);
-                    default:
-                        break;
-                }
-            }
+                        switch (statementKind) {
+                            case SERVICE_NAME:
+                                serviceDescriptor.setServiceName(statement);
+                                break;
+                            case OPERATION_NAME:
+                                Operation operation = new Operation();
+                                operation.setName(statement);
 
-        } catch (IOException e) {
-            e.printStackTrace();
+                                // increment array of operations index
+                                int size = arrayOfOperationsIndex.size();
+                                arrayOfOperationsIndex.add(size++);
+
+                                // add operation
+                                serviceDescriptor.getServiceOperations().add(operation);
+                                break;
+                            case OPERATION_PARAM:
+                                serviceDescriptor.getServiceOperations().get(arrayOfOperationsIndex.size() - 1).getParamList().add(statement);
+                                break;
+                            case OPERATION_USE_OF_TYPE:
+                                serviceDescriptor.getServiceOperations().get(arrayOfOperationsIndex.size() - 1).getUsingTypesList().add(statement);
+                                break;
+                        }
+                    });
+
+
         }
 
         return serviceDescriptor;
+    }
+
+    private String sanitize(String statement) {
+        return statement.replace(" ", "") // remove blank spaces
+                .replace(",", ""); // remove commas
     }
 
     private Statements whichKindOfStatementIs(String line) {
