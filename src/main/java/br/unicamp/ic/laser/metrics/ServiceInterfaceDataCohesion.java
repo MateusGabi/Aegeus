@@ -1,5 +1,6 @@
 package br.unicamp.ic.laser.metrics;
 
+import br.unicamp.ic.laser.model.IServiceDescriptor;
 import br.unicamp.ic.laser.model.Operation;
 import br.unicamp.ic.laser.model.ServiceDescriptor;
 import br.unicamp.ic.laser.utils.Utils;
@@ -19,7 +20,7 @@ import java.util.stream.Collectors;
  */
 public class ServiceInterfaceDataCohesion implements IMetric {
     @Override
-    public Double evaluate(ServiceDescriptor serviceDescriptor) {
+    public Double evaluate(IServiceDescriptor serviceDescriptor) {
 
         if (serviceDescriptor == null || serviceDescriptor.getServiceOperations() == null) {
             return 0.0;
