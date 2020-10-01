@@ -10,6 +10,7 @@ import br.unicamp.ic.laser.model.IServiceDescriptor;
 import br.unicamp.ic.laser.model.IServiceDescriptorBuilder;
 import br.unicamp.ic.laser.model.Operation;
 import br.unicamp.ic.laser.model.ServiceDescriptor;
+import br.unicamp.ic.laser.readers.JavaReflectionServiceDescriptorBuilder;
 
 public class Main {
     public static void main(String[] args) {
@@ -38,5 +39,20 @@ public class Main {
 
         System.out.println("ServiceInterfaceDataCohesion: " + new ServiceInterfaceDataCohesion().evaluate(serviceDescriptor));
         System.out.println("StrictServiceImplementationCohesion: " + new StrictServiceImplementationCohesion().evaluate(serviceDescriptor));
+
+
+        //----
+        String JAVA_FILE_PATH = "/home/mgm/Documents/Unicamp/Master/repos/sitewhere/service-device-management/build/classes/java/main/com/sitewhere/microservice/grpc/DeviceManagementImpl.class";
+        System.out.println("getting file from path");
+
+        ServiceDescriptor.Builder serviceDescriptorBuilder1 = new ServiceDescriptor.Builder(new JavaReflectionServiceDescriptorBuilder());
+        IServiceDescriptor serviceDescriptor1 = null;
+        try {
+            serviceDescriptor1 = serviceDescriptorBuilder1.build(JAVA_FILE_PATH);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println("Service Name: " + serviceDescriptor1.getServiceName());
     }
 }
