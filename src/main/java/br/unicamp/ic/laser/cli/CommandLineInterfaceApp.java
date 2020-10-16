@@ -3,9 +3,15 @@ package br.unicamp.ic.laser.cli;
 import br.unicamp.ic.laser.metrics.ServiceInterfaceDataCohesion;
 import br.unicamp.ic.laser.metrics.StrictServiceImplementationCohesion;
 import br.unicamp.ic.laser.model.IServiceDescriptor;
+import br.unicamp.ic.laser.model.IServiceDescriptorBuilder;
 import br.unicamp.ic.laser.model.ServiceDescriptor;
+import br.unicamp.ic.laser.readers.JavaGrpcReflectionServiceDescriptorBuilder;
+import com.github.javaparser.StaticJavaParser;
+import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.body.MethodDeclaration;
 import org.apache.commons.cli.*;
 
+import java.io.File;
 import java.io.IOException;
 
 public class CommandLineInterfaceApp implements ICommandLineInterfaceApp {
@@ -22,7 +28,9 @@ public class CommandLineInterfaceApp implements ICommandLineInterfaceApp {
 
             System.out.println("Starting application");
 
-            ServiceDescriptor.Builder serviceDescriptorBuilder = new ServiceDescriptor.Builder();
+            ServiceDescriptor.Builder serviceDescriptorBuilder = new ServiceDescriptor.Builder(
+                 new JavaGrpcReflectionServiceDescriptorBuilder()
+            );
             IServiceDescriptor serviceDescriptor = null;
             try {
                 serviceDescriptor = serviceDescriptorBuilder.build(filename);
