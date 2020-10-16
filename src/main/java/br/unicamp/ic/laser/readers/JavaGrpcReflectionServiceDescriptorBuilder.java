@@ -8,30 +8,38 @@ import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.TypeDeclaration;
+import com.github.javaparser.ast.expr.AssignExpr;
+import com.github.javaparser.ast.expr.Expression;
+import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.Statement;
+import com.github.javaparser.resolution.UnsolvedSymbolException;
+import com.github.javaparser.resolution.types.ResolvedType;
+import com.github.javaparser.symbolsolver.JavaSymbolSolver;
+import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
+import com.github.javaparser.symbolsolver.resolution.typesolvers.CombinedTypeSolver;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author Mateus Gabi Moreira
- * @link example 6 from https://www.hellojava.com/a/80798.html
  */
 public class JavaGrpcReflectionServiceDescriptorBuilder implements IServiceDescriptorBuilder {
     @Override
     public IServiceDescriptor build(String filePath) throws IOException {
         IServiceDescriptor serviceDescriptor = new ServiceDescriptor();
 
+        TypeSolver typeSolver = new CombinedTypeSolver();
+        JavaSymbolSolver symbolSolver = new JavaSymbolSolver(typeSolver);
+
+        StaticJavaParser.getConfiguration().setSymbolResolver(symbolSolver);
+
         CompilationUnit compilationUnit = StaticJavaParser.parse(new File(filePath));
 
-        System.out.println("Métodosshdsuhda");
         String clsName = compilationUnit.getType(0).getName().toString();
-        MethodDeclaration firstMethod = compilationUnit.getType(0).getMethods().get(0);
-        String firstMethodDeclaration = compilationUnit.getType(0).getMethods().get(0).getDeclarationAsString(true, true, true);
-        System.out.println(firstMethod.getParameters());
 
         serviceDescriptor.setServiceName(clsName);
 
@@ -50,11 +58,34 @@ public class JavaGrpcReflectionServiceDescriptorBuilder implements IServiceDescr
 
             Operation operation = new Operation();
             operation.setName(clsName+"::"+methodName);
-            operation.setResponseType(currentMethodDeclaration.getParameter(0).getTypeAsString());
+            operation.setResponseType(currentMethodDeclaration.getParameter(1).getTypeAsString());
             List<String> paramsList = new ArrayList<>();
-            paramsList.add(currentMethodDeclaration.getParameter(1).getNameAsString());
+            paramsList.add(currentMethodDeclaration.getParameter(0).getNameAsString());
             operation.setParamList(paramsList);
 
+            Set<String> usingTypes = new HashSet<>();
+
+            currentMethodDeclaration.findAll(NameExpr.class).forEach(ae -> {
+                try {
+                    ResolvedType resolvedType = ae.calculateResolvedType();
+                    usingTypes.add(resolvedType.toString());
+                } catch (UnsolvedSymbolException ex) {
+                    // ignore
+                    String[] splitedMessage = ex.getMessage().split(" ");
+                    String[] blockedWords = new String[] { "Unsolved", "symbol", "in", ":", "Solving" };
+                    Optional<String> a = Arrays.stream(splitedMessage).distinct().filter(it -> {
+                        return Arrays.stream(blockedWords).noneMatch(i -> i.equals(it));
+                    }).findFirst();
+
+                    if (a.isPresent()) {
+                        usingTypes.add(a.get());
+                    }
+                }
+            });
+
+            operation.setUsingTypesList(usingTypes.stream().collect(Collectors.toList()));
+
+            // last line
             operations.add(operation);
 
         }

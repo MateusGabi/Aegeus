@@ -21,16 +21,24 @@ public class CommandLineInterfaceApp implements ICommandLineInterfaceApp {
         CommandLine line = parseArguments(args);
 
         if (line.hasOption("filename")) {
-            System.out.println(line.getOptionValue("filename"));
             String filename = line.getOptionValue("filename");
+            String parser = line.getOptionValue("p");
 
 //            String FILE_PATH = "/home/mgm/Documents/Unicamp/Master/analysis/sitewhere/in/label-generation-service.7ce7cac632a46847b9a24d97e796ca5967ed6ac7.txt";
 
             System.out.println("Starting application");
 
-            ServiceDescriptor.Builder serviceDescriptorBuilder = new ServiceDescriptor.Builder(
-                 new JavaGrpcReflectionServiceDescriptorBuilder()
-            );
+            ServiceDescriptor.Builder serviceDescriptorBuilder = null;
+
+            if (line.hasOption('p') && parser.equals("javagrpc")) {
+                System.out.println("Using Java GRPC Parser");
+                serviceDescriptorBuilder = new ServiceDescriptor.Builder(new JavaGrpcReflectionServiceDescriptorBuilder());
+            }
+            else {
+                System.out.println("Using default parser");
+                serviceDescriptorBuilder = new ServiceDescriptor.Builder();
+            }
+
             IServiceDescriptor serviceDescriptor = null;
             try {
                 serviceDescriptor = serviceDescriptorBuilder.build(filename);
@@ -99,6 +107,7 @@ public class CommandLineInterfaceApp implements ICommandLineInterfaceApp {
         Options options = new Options();
 
         options.addOption("f", "filename", true, "file name to load data from");
+        options.addOption("p", true, "parser");
 
         return options;
     }
