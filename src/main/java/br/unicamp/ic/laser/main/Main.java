@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import br.unicamp.ic.laser.cli.CommandLineInterfaceApp;
 import br.unicamp.ic.laser.metrics.ServiceInterfaceDataCohesion;
 import br.unicamp.ic.laser.metrics.StrictServiceImplementationCohesion;
 import br.unicamp.ic.laser.model.IServiceDescriptor;
@@ -14,45 +15,7 @@ import br.unicamp.ic.laser.readers.JavaReflectionServiceDescriptorBuilder;
 
 public class Main {
     public static void main(String[] args) {
-
-        String FILE_PATH = "/home/mgm/Documents/Unicamp/Master/analysis/sitewhere/in/label-generation-service.7ce7cac632a46847b9a24d97e796ca5967ed6ac7.txt";
-
-        System.out.println("Starting application");
-
-        ServiceDescriptor.Builder serviceDescriptorBuilder = new ServiceDescriptor.Builder();
-        IServiceDescriptor serviceDescriptor = null;
-        try {
-            serviceDescriptor = serviceDescriptorBuilder.build(FILE_PATH);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        System.out.println("Service Name: " + serviceDescriptor.getServiceName());
-
-        System.out.println("Operations: " + serviceDescriptor.getServiceOperations().size());
-
-//        serviceDescriptor.getServiceOperations().forEach(operation -> {
-//            System.out.println("Operation name: " + operation.getName());
-//            System.out.println("Params: " + operation.getParamList());
-//            System.out.println("Types: " + operation.getUsingTypesList());
-//        });
-
-        System.out.println("ServiceInterfaceDataCohesion: " + new ServiceInterfaceDataCohesion().evaluate(serviceDescriptor));
-        System.out.println("StrictServiceImplementationCohesion: " + new StrictServiceImplementationCohesion().evaluate(serviceDescriptor));
-
-
-        //----
-        String JAVA_FILE_PATH = "/home/mgm/Documents/Unicamp/Master/repos/sitewhere/service-device-management/build/classes/java/main/com/sitewhere/microservice/grpc/DeviceManagementImpl.class";
-        System.out.println("getting file from path");
-
-        ServiceDescriptor.Builder serviceDescriptorBuilder1 = new ServiceDescriptor.Builder(new JavaReflectionServiceDescriptorBuilder());
-        IServiceDescriptor serviceDescriptor1 = null;
-        try {
-            serviceDescriptor1 = serviceDescriptorBuilder1.build(JAVA_FILE_PATH);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        System.out.println("Service Name: " + serviceDescriptor1.getServiceName());
+        CommandLineInterfaceApp commandLineInterfaceApp = new CommandLineInterfaceApp();
+        commandLineInterfaceApp.run(args);
     }
 }
