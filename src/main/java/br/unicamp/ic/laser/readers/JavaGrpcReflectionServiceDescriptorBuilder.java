@@ -60,7 +60,7 @@ public class JavaGrpcReflectionServiceDescriptorBuilder implements IServiceDescr
             operation.setName(clsName+"::"+methodName);
             operation.setResponseType(currentMethodDeclaration.getParameter(1).getTypeAsString());
             List<String> paramsList = new ArrayList<>();
-            paramsList.add(currentMethodDeclaration.getParameter(0).getNameAsString());
+            paramsList.add(currentMethodDeclaration.getParameter(0).getTypeAsString());
             operation.setParamList(paramsList);
 
             List<String> usingTypes = new ArrayList<>();
