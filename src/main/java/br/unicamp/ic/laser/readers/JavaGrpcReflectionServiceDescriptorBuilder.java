@@ -63,7 +63,7 @@ public class JavaGrpcReflectionServiceDescriptorBuilder implements IServiceDescr
             paramsList.add(currentMethodDeclaration.getParameter(0).getNameAsString());
             operation.setParamList(paramsList);
 
-            Set<String> usingTypes = new HashSet<>();
+            List<String> usingTypes = new ArrayList<>();
 
             currentMethodDeclaration.findAll(NameExpr.class).forEach(ae -> {
                 try {
@@ -83,7 +83,7 @@ public class JavaGrpcReflectionServiceDescriptorBuilder implements IServiceDescr
                 }
             });
 
-            operation.setUsingTypesList(usingTypes.stream().collect(Collectors.toList()));
+            operation.setUsingTypesList(usingTypes);
 
             // last line
             operations.add(operation);
