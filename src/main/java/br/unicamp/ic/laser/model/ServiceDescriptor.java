@@ -68,5 +68,12 @@ public class ServiceDescriptor implements IServiceDescriptor {
 		this.serviceOperations = serviceOperations;
 	}
 
+	@Override
+	public String toString() {
+		return "ServiceDescriptor{" +
+				"serviceName='" + serviceName + '\'' +
+				", serviceOperations=" + serviceOperations +
+				'}';
+	}
 }
 
