@@ -68,4 +68,15 @@ public class Operation {
 		op.setResponseType(this.responseType);
 		return op;
 	}
+
+	@Override
+	public String toString() {
+		return "Operation{" +
+				"path='" + path + '\'' +
+				", name='" + name + '\'' +
+				", paramList=" + paramList +
+				", usingTypesList=" + usingTypesList +
+				", responseType='" + responseType + '\'' +
+				'}';
+	}
 }
