@@ -1,18 +1,14 @@
 package br.unicamp.ic.laser.cli;
 
-import br.unicamp.ic.laser.metrics.ServiceInterfaceDataCohesion;
-import br.unicamp.ic.laser.metrics.StrictServiceImplementationCohesion;
+import br.unicamp.ic.laser.metrics.MetricCalculator;
+import br.unicamp.ic.laser.metrics.MetricResult;
 import br.unicamp.ic.laser.model.IServiceDescriptor;
-import br.unicamp.ic.laser.model.IServiceDescriptorBuilder;
 import br.unicamp.ic.laser.model.ServiceDescriptor;
 import br.unicamp.ic.laser.readers.JavaGrpcReflectionServiceDescriptorBuilder;
-import com.github.javaparser.StaticJavaParser;
-import com.github.javaparser.ast.CompilationUnit;
-import com.github.javaparser.ast.body.MethodDeclaration;
 import org.apache.commons.cli.*;
 
-import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 public class CommandLineInterfaceApp implements ICommandLineInterfaceApp {
     @Override
@@ -23,8 +19,6 @@ public class CommandLineInterfaceApp implements ICommandLineInterfaceApp {
         if (line.hasOption("filename")) {
             String filename = line.getOptionValue("filename");
             String parser = line.getOptionValue("p");
-
-//            String FILE_PATH = "/home/mgm/Documents/Unicamp/Master/analysis/sitewhere/in/label-generation-service.7ce7cac632a46847b9a24d97e796ca5967ed6ac7.txt";
 
             System.out.println("Starting application");
 
@@ -46,12 +40,16 @@ public class CommandLineInterfaceApp implements ICommandLineInterfaceApp {
                 e.printStackTrace();
             }
 
-            System.out.println("Service Name: " + serviceDescriptor.getServiceName());
+            MetricCalculator metricCalculator = new MetricCalculator();
+            List<MetricResult> metricResults = metricCalculator.assess(serviceDescriptor);
 
-            System.out.println("Operations: " + serviceDescriptor.getServiceOperations().size());
 
-            System.out.println("ServiceInterfaceDataCohesion: " + new ServiceInterfaceDataCohesion().evaluate(serviceDescriptor));
-            System.out.println("StrictServiceImplementationCohesion: " + new StrictServiceImplementationCohesion().evaluate(serviceDescriptor));
+//            System.out.println("Service Name: " + serviceDescriptor.getServiceName());
+//
+//            System.out.println("Operations: " + serviceDescriptor.getServiceOperations().size());
+//
+//            System.out.println("ServiceInterfaceDataCohesion: " + new ServiceInterfaceDataCohesion().evaluate(serviceDescriptor));
+//            System.out.println("StrictServiceImplementationCohesion: " + new StrictServiceImplementationCohesion().evaluate(serviceDescriptor));
 
 
         } else {
