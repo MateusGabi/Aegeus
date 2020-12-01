@@ -1,5 +1,6 @@
 package br.unicamp.ic.laser.cli;
 
+import br.unicamp.ic.laser.exporters.ConsoleExporter;
 import br.unicamp.ic.laser.metrics.MetricCalculator;
 import br.unicamp.ic.laser.metrics.MetricResult;
 import br.unicamp.ic.laser.model.IServiceDescriptor;
@@ -43,14 +44,7 @@ public class CommandLineInterfaceApp implements ICommandLineInterfaceApp {
             MetricCalculator metricCalculator = new MetricCalculator();
             List<MetricResult> metricResults = metricCalculator.assess(serviceDescriptor);
 
-
-//            System.out.println("Service Name: " + serviceDescriptor.getServiceName());
-//
-//            System.out.println("Operations: " + serviceDescriptor.getServiceOperations().size());
-//
-//            System.out.println("ServiceInterfaceDataCohesion: " + new ServiceInterfaceDataCohesion().evaluate(serviceDescriptor));
-//            System.out.println("StrictServiceImplementationCohesion: " + new StrictServiceImplementationCohesion().evaluate(serviceDescriptor));
-
+            new ConsoleExporter().export(metricResults);
 
         } else {
             printAppHelp();
