@@ -1,6 +1,7 @@
 package br.unicamp.ic.laser.cli;
 
 import br.unicamp.ic.laser.exporters.ConsoleExporter;
+import br.unicamp.ic.laser.exporters.MetricsExporter;
 import br.unicamp.ic.laser.metrics.MetricCalculator;
 import br.unicamp.ic.laser.metrics.MetricResult;
 import br.unicamp.ic.laser.model.IServiceDescriptor;
@@ -41,10 +42,11 @@ public class CommandLineInterfaceApp implements ICommandLineInterfaceApp {
                 e.printStackTrace();
             }
 
-            MetricCalculator metricCalculator = new MetricCalculator();
-            List<MetricResult> metricResults = metricCalculator.assess(serviceDescriptor);
+            // assess metrics
+            List<MetricResult> metricResults = new MetricCalculator().assess(serviceDescriptor);
 
-            new ConsoleExporter().export(metricResults);
+            // export assessments
+            new MetricsExporter().export(metricResults);
 
         } else {
             printAppHelp();
