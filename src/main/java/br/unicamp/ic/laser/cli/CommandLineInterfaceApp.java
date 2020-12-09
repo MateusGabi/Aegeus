@@ -21,13 +21,11 @@ public class CommandLineInterfaceApp implements ICommandLineInterfaceApp {
         if (line.hasOption("filename")) {
             String filename = line.getOptionValue("filename");
             String parser = line.getOptionValue("p");
-
-            System.out.println("Starting application");
+            String version = line.getOptionValue("v");
 
             ServiceDescriptor.Builder serviceDescriptorBuilder = null;
 
             if (line.hasOption('p') && parser.equals("javagrpc")) {
-                System.out.println("Using Java GRPC Parser");
                 serviceDescriptorBuilder = new ServiceDescriptor.Builder(new JavaGrpcReflectionServiceDescriptorBuilder());
             }
             else {
@@ -38,6 +36,7 @@ public class CommandLineInterfaceApp implements ICommandLineInterfaceApp {
             IServiceDescriptor serviceDescriptor = null;
             try {
                 serviceDescriptor = serviceDescriptorBuilder.build(filename);
+                serviceDescriptor.setServiceVersion(version);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -102,6 +101,7 @@ public class CommandLineInterfaceApp implements ICommandLineInterfaceApp {
 
         options.addOption("f", "filename", true, "file name to load data from");
         options.addOption("p", true, "parser");
+        options.addOption("v", true, "service version");
 
         return options;
     }

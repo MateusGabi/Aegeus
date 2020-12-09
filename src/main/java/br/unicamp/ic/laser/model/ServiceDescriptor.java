@@ -31,8 +31,9 @@ public class ServiceDescriptor implements IServiceDescriptor {
 			return this.serviceDescriptorBuilder.build(file);
 		}
 	}
-	
+
 	private String serviceName;
+	private String serviceVersion;
 	private List<Operation> serviceOperations;
 
 	// TODO: become protected
@@ -54,6 +55,11 @@ public class ServiceDescriptor implements IServiceDescriptor {
 	}
 
 	@Override
+	public String getServiceVersion() {
+		return serviceVersion;
+	}
+
+	@Override
 	public List<Operation> getServiceOperations() {
 		return serviceOperations;
 	}
@@ -61,6 +67,11 @@ public class ServiceDescriptor implements IServiceDescriptor {
 	@Override
 	public void setServiceName(String name) {
 		this.serviceName = name;
+	}
+
+	@Override
+	public void setServiceVersion(String version) {
+		this.serviceVersion = version;
 	}
 
 	@Override

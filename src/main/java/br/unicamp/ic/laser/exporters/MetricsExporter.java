@@ -8,7 +8,7 @@ import java.util.List;
 public class MetricsExporter {
     private List<IExporter> getExporters() {
         return Arrays.asList(
-                new ConsoleExporter()
+                new CsvExporter()
         );
     }
 
