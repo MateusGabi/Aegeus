@@ -1,12 +1,32 @@
 package br.unicamp.ic.laser.metrics;
 
 public class MetricResult {
+    private String serviceName;
+    private String version;
     private String metricName;
     private Double metricValue;
 
-    public MetricResult(String metricName, Double metricValue) {
+    public MetricResult(String serviceName, String version, String metricName, Double metricValue) {
+        this.serviceName = serviceName;
+        this.version = version;
         this.metricName = metricName;
         this.metricValue = metricValue;
+    }
+
+    public String getServiceName() {
+        return serviceName;
+    }
+
+    public void setServiceName(String serviceName) {
+        this.serviceName = serviceName;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
     }
 
     public String getMetricName() {

@@ -12,6 +12,11 @@ public class ConsoleExporter implements IExporter {
         if (metricResults.size() == 0) {
            // not implemented
         }
-        metricResults.forEach(metricResult -> System.out.println(metricResult.getMetricName()+ ": "+metricResult.getMetricValue()));
+        metricResults.forEach(metricResult -> {
+            System.out.println("SERVICE NAME: " + metricResult.getServiceName());
+            System.out.println("VERSION: " + metricResult.getVersion());
+            System.out.println("METRIC: " + metricResult.getMetricName());
+            System.out.println("VALUE: " + metricResult.getMetricValue());
+        });
     }
 }

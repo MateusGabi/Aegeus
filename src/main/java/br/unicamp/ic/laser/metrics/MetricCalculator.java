@@ -23,7 +23,7 @@ public class MetricCalculator {
         }
 
         List metricResults = metrics.stream().map(metric ->
-                new MetricResult(metric.getClass().toString(), metric.evaluate(serviceDescriptor))).collect(Collectors.toList());
+                new MetricResult(serviceDescriptor.getServiceName(), "", metric.getClass().toString(), metric.evaluate(serviceDescriptor))).collect(Collectors.toList());
 
         return metricResults;
     }
