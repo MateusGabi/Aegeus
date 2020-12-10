@@ -15,11 +15,15 @@ public class StrictServiceImplementationCohesionMetricTest {
 	@Test
 	public void should_return_not_null() {
 		ServiceDescriptor serviceDescriptor = new ServiceDescriptor();
-		Double actual = new StrictServiceImplementationCohesion().evaluate(serviceDescriptor);
 
-		assertNotNull(actual);
-		assertEquals(0.0, actual, 0.0);
-		assertEquals("UnkownService", serviceDescriptor.getServiceName());
+		StrictServiceImplementationCohesion instance = new StrictServiceImplementationCohesion();
+		instance.setServiceDescriptor(serviceDescriptor);
+		instance.evaluate();
+
+		MetricResult result = instance.getResult();
+
+		assertNotNull(result);
+		assertEquals(0.0, result.getMetricValue(), 0.0);
 	}
 
 	@Test
@@ -50,10 +54,15 @@ public class StrictServiceImplementationCohesionMetricTest {
 		operations.add(operationServiceB);
 
 		ServiceDescriptor serviceDescriptor = new ServiceDescriptor("Service", operations);
-		Double actual = new StrictServiceImplementationCohesion().evaluate(serviceDescriptor);
 
-		assertNotNull(actual);
-		assertEquals(0.5, actual, 0.0);
+		StrictServiceImplementationCohesion instance = new StrictServiceImplementationCohesion();
+		instance.setServiceDescriptor(serviceDescriptor);
+		instance.evaluate();
+
+		MetricResult result = instance.getResult();
+
+		assertNotNull(result);
+		assertEquals(0.5, result.getMetricValue(), 0.0);
 	}
 
 	@Test
@@ -85,11 +94,14 @@ public class StrictServiceImplementationCohesionMetricTest {
 		operations.add(operationServiceB);
 
 		ServiceDescriptor serviceDescriptor = new ServiceDescriptor("Service A", operations);
+		StrictServiceImplementationCohesion instance = new StrictServiceImplementationCohesion();
+		instance.setServiceDescriptor(serviceDescriptor);
+		instance.evaluate();
 
-		Double actual = new StrictServiceImplementationCohesion().evaluate(serviceDescriptor);
+		MetricResult result = instance.getResult();
 
-		Assert.assertNotNull(actual);
-		Assert.assertEquals(0.5, actual, 0.0);
+		Assert.assertNotNull(result);
+		Assert.assertEquals(0.5, result.getMetricValue(), 0.0);
 	}
 
 	@Test
@@ -117,11 +129,13 @@ public class StrictServiceImplementationCohesionMetricTest {
 		operations.add(operationServiceB);
 
 		ServiceDescriptor serviceDescriptor = new ServiceDescriptor("Service A", operations);
+		StrictServiceImplementationCohesion instance = new StrictServiceImplementationCohesion();
+		instance.setServiceDescriptor(serviceDescriptor);
+		instance.evaluate();
 
-		Double actual = new StrictServiceImplementationCohesion().evaluate(serviceDescriptor);
-
-		Assert.assertNotNull(actual);
-		Assert.assertEquals(0.0, actual, 0.0);
+		MetricResult result = instance.getResult();
+		Assert.assertNotNull(result);
+		Assert.assertEquals(0.0, result.getMetricValue(), 0.0);
 	}
 
 	@Test
@@ -172,11 +186,13 @@ public class StrictServiceImplementationCohesionMetricTest {
 		operations.add(operationServiceD);
 
 		ServiceDescriptor serviceDescriptor = new ServiceDescriptor("Service A", operations);
+		StrictServiceImplementationCohesion instance = new StrictServiceImplementationCohesion();
+		instance.setServiceDescriptor(serviceDescriptor);
+		instance.evaluate();
 
-		Double actual = new StrictServiceImplementationCohesion().evaluate(serviceDescriptor);
-
-		Assert.assertNotNull(actual);
-		Assert.assertEquals(0.3, actual, 0.0);
+		MetricResult result = instance.getResult();
+		Assert.assertNotNull(result);
+		Assert.assertEquals(0.3, result.getMetricValue(), 0.0);
 	}
 
 	@Test
@@ -209,11 +225,13 @@ public class StrictServiceImplementationCohesionMetricTest {
 		operations.add(operationServiceB);
 
 		ServiceDescriptor serviceDescriptor = new ServiceDescriptor("Service A", operations);
+		StrictServiceImplementationCohesion instance = new StrictServiceImplementationCohesion();
+		instance.setServiceDescriptor(serviceDescriptor);
+		instance.evaluate();
 
-		Double actual = new StrictServiceImplementationCohesion().evaluate(serviceDescriptor);
-
-		Assert.assertNotNull(actual);
-		Assert.assertEquals(1.0, actual, 0.0);
+		MetricResult result = instance.getResult();
+		Assert.assertNotNull(result);
+		Assert.assertEquals(1.0, result.getMetricValue(), 0.0);
 	}
 
 	@Test
@@ -258,10 +276,13 @@ public class StrictServiceImplementationCohesionMetricTest {
 		operations.add(operationServiceC);
 
 		ServiceDescriptor serviceDescriptor = new ServiceDescriptor("Service A", operations);
+		StrictServiceImplementationCohesion instance = new StrictServiceImplementationCohesion();
+		instance.setServiceDescriptor(serviceDescriptor);
+		instance.evaluate();
 
-		Double actual = new StrictServiceImplementationCohesion().evaluate(serviceDescriptor);
+		MetricResult result = instance.getResult();
 
-		Assert.assertEquals(6 / (3.0 * 9), actual, 0.0);
+		Assert.assertEquals(6 / (3.0 * 9), result.getMetricValue(), 0.0);
 
 	}
 }

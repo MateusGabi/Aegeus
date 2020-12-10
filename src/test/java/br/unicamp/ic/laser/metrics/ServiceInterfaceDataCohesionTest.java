@@ -11,9 +11,10 @@ public class ServiceInterfaceDataCohesionTest {
     @Test
     public void should_not_return_null() {
         ServiceInterfaceDataCohesion instance = new ServiceInterfaceDataCohesion();
+        instance.setServiceDescriptor(new ServiceDescriptor());
+        instance.evaluate();
 
-        Assert.assertNotNull(instance.evaluate(new ServiceDescriptor()));
-        Assert.assertNotNull(instance.evaluate(null));
+        Assert.assertNotNull(instance.getResult());
     }
 
     @Test
@@ -27,9 +28,13 @@ public class ServiceInterfaceDataCohesionTest {
         operationB.setParamList(Arrays.asList("*String"));
 
         ServiceDescriptor serviceDescriptor = new ServiceDescriptor("Service A", Arrays.asList(operationA, operationB));
-        Double actual = new ServiceInterfaceDataCohesion().evaluate(serviceDescriptor);
 
-        Assert.assertNotNull(actual);
-        Assert.assertEquals(0.5, actual, 0.0);
+        ServiceInterfaceDataCohesion instance = new ServiceInterfaceDataCohesion();
+        instance.setServiceDescriptor(serviceDescriptor);
+        instance.evaluate();
+
+        MetricResult result = instance.getResult();
+        Assert.assertNotNull(result);
+        Assert.assertEquals(0.5, result.getMetricValue(), 0.0);
     }
 }
