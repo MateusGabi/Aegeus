@@ -6,11 +6,7 @@ public class MetricResult {
     private String metricName;
     private Double metricValue;
 
-    public MetricResult(String serviceName, String version, String metricName, Double metricValue) {
-        this.serviceName = serviceName;
-        this.version = version;
-        this.metricName = metricName;
-        this.metricValue = metricValue;
+    public MetricResult() {
     }
 
     public String getServiceName() {

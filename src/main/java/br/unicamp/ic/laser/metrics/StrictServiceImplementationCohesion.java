@@ -1,18 +1,14 @@
 /**
- * 
+ *
  */
 package br.unicamp.ic.laser.metrics;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import br.unicamp.ic.laser.model.Operation;
 import br.unicamp.ic.laser.model.IServiceDescriptor;
+import br.unicamp.ic.laser.model.Operation;
 import br.unicamp.ic.laser.utils.Utils;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Measurement Procedure: The measurement procedure consists of two steps.
@@ -26,42 +22,60 @@ import br.unicamp.ic.laser.utils.Utils;
  * elements multiplied by total number of operations.
  *
  * SSIC (s) = |IC(s)| / (|(BPSs U CsU IsU PsU Hs)| * | SO(sis )|)
- * 
+ *
  * @author Mateus Gabi Moreira
  */
-public class StrictServiceImplementationCohesion implements IMetric {
+public class StrictServiceImplementationCohesion extends AbstractMetric {
 
-	public Double evaluate(IServiceDescriptor serviceDescriptor) {
+    public StrictServiceImplementationCohesion() {
+        this.setMetricName("StrictServiceImplementationCohesion");
+    }
 
-		List<Operation> operations = serviceDescriptor.getServiceOperations();
+    public void evaluate() {
+        IServiceDescriptor serviceDescriptor = this.getServiceDescriptor();
 
-		if (operations != null && operations.size() == 0) {
-			return new Double(0.0);
-		}
+        List<Operation> operations = serviceDescriptor.getServiceOperations();
 
-		List<String> uniqueUsingTypes = operations.stream().map(o -> o.getUsingTypesList()).flatMap(x -> x.stream())
-				.distinct().collect(Collectors.toList());
 
-		int numberOfOperations = operations.size();
+        MetricResult metricResult = new MetricResult();
+        metricResult.setMetricName(this.getMetricName());
+        metricResult.setServiceName(serviceDescriptor.getServiceName());
+        metricResult.setVersion(serviceDescriptor.getServiceVersion());
+        metricResult.setMetricValue(0.0);
 
-		int intersectTypesSize = Utils
-				.pairs(operations.stream().map(o -> o.getUsingTypesList()).collect(Collectors.toList())).stream()
-				.map((pair) -> {
-					List<String> typesIntoFirstOperation = pair.get(0);
-					List<String> typesIntoSecondOperation = pair.get(1);
+        this.setResult(metricResult);
 
-					List<String> intersectElements = typesIntoFirstOperation.stream()
-							.filter(typesIntoSecondOperation::contains).collect(Collectors.toList());
+        if (operations != null && operations.size() == 0) {
+            // do nothing
+        }
 
-					return intersectElements;
-				}).flatMap(types -> types.stream())
-				.collect(Collectors.toSet()).size();
+        if (serviceDescriptor.getServiceOperations().size() == 0) {
+            // do nothing
+        } else {
+            List<String> uniqueUsingTypes = operations.stream().map(o -> o.getUsingTypesList()).flatMap(x -> x.stream())
+                    .distinct().collect(Collectors.toList());
 
-		// multiplica por dois porque é o conjunto de pares, então tanto a ida como a
-		// volta
-		// ex: (Service::A-Service::B e Service::B-Service::A) contam.
-		return (intersectTypesSize * 2.0 / (uniqueUsingTypes.size() * numberOfOperations));
+            int numberOfOperations = operations.size();
 
-	}
+            int intersectTypesSize = Utils
+                    .pairs(operations.stream().map(o -> o.getUsingTypesList()).collect(Collectors.toList())).stream()
+                    .map((pair) -> {
+                        List<String> typesIntoFirstOperation = pair.get(0);
+                        List<String> typesIntoSecondOperation = pair.get(1);
+
+                        List<String> intersectElements = typesIntoFirstOperation.stream()
+                                .filter(typesIntoSecondOperation::contains).collect(Collectors.toList());
+
+                        return intersectElements;
+                    }).flatMap(types -> types.stream())
+                    .collect(Collectors.toSet()).size();
+
+            // multiplica por dois porque é o conjunto de pares, então tanto a ida como a
+            // volta
+            // ex: (Service::A-Service::B e Service::B-Service::A) contam.
+            this.getResult().setMetricValue(intersectTypesSize * 2.0 / (uniqueUsingTypes.size() * numberOfOperations));
+        }
+
+    }
 
 }

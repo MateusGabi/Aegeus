@@ -18,42 +18,58 @@ import java.util.stream.Collectors;
  * <p>
  * SIDC (s) = |Common(Param(so ∈ SO(sis )| / totalParamTypes
  */
-public class ServiceInterfaceDataCohesion implements IMetric {
+public class ServiceInterfaceDataCohesion extends AbstractMetric {
+
+    public ServiceInterfaceDataCohesion() {
+        this.setMetricName("ServiceInterfaceDataCohesion");
+    }
+
     @Override
-    public Double evaluate(IServiceDescriptor serviceDescriptor) {
+    public void evaluate() {
+        IServiceDescriptor serviceDescriptor = this.getServiceDescriptor();
+
+        MetricResult metricResult = new MetricResult();
+        metricResult.setMetricName(this.getMetricName());
+        metricResult.setServiceName(serviceDescriptor.getServiceName());
+        metricResult.setVersion(serviceDescriptor.getServiceVersion());
+        metricResult.setMetricValue(0.0);
+
+        this.setResult(metricResult);
 
         if (serviceDescriptor == null || serviceDescriptor.getServiceOperations() == null) {
-            return 0.0;
+            // do nothing
         }
 
         if (serviceDescriptor.getServiceOperations().size() == 0) {
-            return 0.0;
+            // do nothing
         }
 
-        // set of all operations type
-        long totalOfParamsType = serviceDescriptor.getServiceOperations()
-                .stream()
-                .map(o -> o.getParamList())
-                .filter(Objects::nonNull)
-                .flatMap(types -> types.stream())
-                .distinct()
-                .count();
+        else {
+            // set of all operations type
+            long totalOfParamsType = serviceDescriptor.getServiceOperations()
+                    .stream()
+                    .map(o -> o.getParamList())
+                    .filter(Objects::nonNull)
+                    .flatMap(types -> types.stream())
+                    .distinct()
+                    .count();
 
-        // pairs of operations
-        int intersectTypesSize = Utils
-                .pairs(serviceDescriptor.getServiceOperations().stream().map(o -> o.getParamList()).collect(Collectors.toList())).stream()
-                .map((pair) -> {
-                    List<String> typesIntoFirstOperation = pair.get(0);
-                    List<String> typesIntoSecondOperation = pair.get(1);
+            // pairs of operations
+            int intersectTypesSize = Utils
+                    .pairs(serviceDescriptor.getServiceOperations().stream().map(o -> o.getParamList()).collect(Collectors.toList())).stream()
+                    .map((pair) -> {
+                        List<String> typesIntoFirstOperation = pair.get(0);
+                        List<String> typesIntoSecondOperation = pair.get(1);
 
-                    List<String> intersectElements = typesIntoFirstOperation.stream()
-                            .filter(typesIntoSecondOperation::contains).collect(Collectors.toList());
+                        List<String> intersectElements = typesIntoFirstOperation.stream()
+                                .filter(typesIntoSecondOperation::contains).collect(Collectors.toList());
 
-                    return intersectElements;
-                }).flatMap(types -> types.stream())
-                .collect(Collectors.toSet()).size();
+                        return intersectElements;
+                    }).flatMap(types -> types.stream())
+                    .collect(Collectors.toSet()).size();
 
 
-        return intersectTypesSize / (totalOfParamsType * 1.0);
+            this.getResult().setMetricValue(intersectTypesSize / (totalOfParamsType * 1.0));
+        }
     }
 }
