@@ -12,7 +12,8 @@ public class MetricCalculator {
         return Arrays.asList(
                 new ServiceInterfaceDataCohesion(),
                 new StrictServiceImplementationCohesion(),
-                new LackOfMessageLevelCohesion()
+                new LackOfMessageLevelCohesion(),
+                new NumberOfOperations()
         );
     }
 
