@@ -11,7 +11,8 @@ public class MetricCalculator {
     private List<IMetric> getMetrics() {
         return Arrays.asList(
                 new ServiceInterfaceDataCohesion(),
-                new StrictServiceImplementationCohesion()
+                new StrictServiceImplementationCohesion(),
+                new LackOfMessageLevelCohesion()
         );
     }
 
