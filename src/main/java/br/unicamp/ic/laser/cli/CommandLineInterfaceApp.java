@@ -7,6 +7,7 @@ import br.unicamp.ic.laser.metrics.MetricResult;
 import br.unicamp.ic.laser.model.IServiceDescriptor;
 import br.unicamp.ic.laser.model.ServiceDescriptor;
 import br.unicamp.ic.laser.readers.JavaGrpcReflectionServiceDescriptorBuilder;
+import br.unicamp.ic.laser.readers.JavaSimpleServiceDescriptorBuilder;
 import org.apache.commons.cli.*;
 
 import java.io.IOException;
@@ -27,6 +28,8 @@ public class CommandLineInterfaceApp implements ICommandLineInterfaceApp {
 
             if (line.hasOption('p') && parser.equals("javagrpc")) {
                 serviceDescriptorBuilder = new ServiceDescriptor.Builder(new JavaGrpcReflectionServiceDescriptorBuilder());
+            } else if(line.hasOption('p') && parser.equals("java")) {
+                serviceDescriptorBuilder = new ServiceDescriptor.Builder(new JavaSimpleServiceDescriptorBuilder());
             }
             else {
                 System.out.println("Using default parser");
