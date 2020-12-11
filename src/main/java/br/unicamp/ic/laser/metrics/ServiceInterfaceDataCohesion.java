@@ -1,9 +1,11 @@
 package br.unicamp.ic.laser.metrics;
 
 import br.unicamp.ic.laser.model.IServiceDescriptor;
+import br.unicamp.ic.laser.model.Operation;
 import br.unicamp.ic.laser.model.Parameter;
 import br.unicamp.ic.laser.utils.Utils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -48,27 +50,30 @@ public class ServiceInterfaceDataCohesion extends AbstractMetric {
             long totalOfParamsType = serviceDescriptor.getServiceOperations()
                     .stream()
                     .map(o -> o.getParamList())
+                    .map(o -> Parameter.getParameterTypes(o))
                     .filter(Objects::nonNull)
                     .flatMap(types -> types.stream())
                     .distinct()
                     .count();
 
-            // pairs of operations
-            int intersectTypesSize = Utils
-                    .pairs(serviceDescriptor.getServiceOperations().stream().map(o -> Parameter.getParameterTypes(o.getParamList())).collect(Collectors.toList())).stream()
-                    .map((pair) -> {
-                        List<String> typesIntoFirstOperation = pair.get(0);
-                        List<String> typesIntoSecondOperation = pair.get(1);
+            ArrayList<ArrayList<Operation>> pairsOfOperations = Utils.pairs(serviceDescriptor.getServiceOperations());
 
-                        List<String> intersectElements = typesIntoFirstOperation.stream()
-                                .filter(typesIntoSecondOperation::contains).collect(Collectors.toList());
+            int intersectTypesSize = pairsOfOperations.stream().map(pair -> {
+                Operation operation1 = pair.get(0);
+                Operation operation2 = pair.get(1);
 
-                        return intersectElements;
-                    }).flatMap(types -> types.stream())
-                    .collect(Collectors.toSet()).size();
-
+                return commonParameterTypes(operation1, operation2);
+            }).flatMap(types -> types.stream()).collect(Collectors.toSet()).size();
 
             this.getResult().setMetricValue(intersectTypesSize / (totalOfParamsType * 1.0));
         }
+    }
+
+    private List<String> commonParameterTypes(Operation operation1, Operation operation2) {
+        List<String> typesIntoFirstOperation = Parameter.getParameterTypes(operation1.getParamList());
+        List<String> typesIntoSecondOperation = Parameter.getParameterTypes(operation2.getParamList());
+
+        return typesIntoFirstOperation.stream()
+                .filter(typesIntoSecondOperation::contains).collect(Collectors.toList());
     }
 }
