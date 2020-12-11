@@ -1,12 +1,9 @@
 package br.unicamp.ic.laser.metrics;
 
 import br.unicamp.ic.laser.model.IServiceDescriptor;
-import br.unicamp.ic.laser.model.Operation;
 import br.unicamp.ic.laser.model.Parameter;
-import br.unicamp.ic.laser.model.ServiceDescriptor;
 import br.unicamp.ic.laser.utils.Utils;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -42,13 +39,11 @@ public class ServiceInterfaceDataCohesion extends AbstractMetric {
 
         if (serviceDescriptor == null || serviceDescriptor.getServiceOperations() == null) {
             // do nothing
-        }
-
-        if (serviceDescriptor.getServiceOperations().size() == 0) {
-            // do nothing
-        }
-
-        else {
+        } else if (serviceDescriptor.getServiceOperations().size() == 0) {
+            this.getResult().setMetricValue(1.0);
+        } else if (serviceDescriptor.getServiceOperations().size() == 1) {
+            this.getResult().setMetricValue(1.0);
+        } else {
             // set of all operations type
             long totalOfParamsType = serviceDescriptor.getServiceOperations()
                     .stream()

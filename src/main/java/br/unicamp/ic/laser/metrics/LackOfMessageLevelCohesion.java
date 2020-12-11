@@ -30,13 +30,13 @@ public class LackOfMessageLevelCohesion extends AbstractMetric {
 
         if (serviceDescriptor == null || serviceDescriptor.getServiceOperations() == null) {
             // do nothing
-        }
-
-        if (serviceDescriptor.getServiceOperations().size() == 0) {
+        } else if (serviceDescriptor.getServiceOperations().size() == 0) {
             // do nothing
-        }
-
-        else {
+            this.getResult().setMetricValue(1.0);
+        } else if (serviceDescriptor.getServiceOperations().size() == 1) {
+            // do nothing
+            this.getResult().setMetricValue(1.0);
+        } else {
             List<Operation> operations = serviceDescriptor.getServiceOperations();
             ArrayList<ArrayList<Operation>> operationPairs = Utils.pairs(operations);
 
