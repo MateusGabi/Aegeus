@@ -1,9 +1,6 @@
 package br.unicamp.ic.laser.readers;
 
-import br.unicamp.ic.laser.model.IServiceDescriptor;
-import br.unicamp.ic.laser.model.IServiceDescriptorBuilder;
-import br.unicamp.ic.laser.model.Operation;
-import br.unicamp.ic.laser.model.ServiceDescriptor;
+import br.unicamp.ic.laser.model.*;
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.MethodDeclaration;
@@ -47,9 +44,17 @@ public class JavaSimpleServiceDescriptorBuilder implements IServiceDescriptorBui
             Operation operation = new Operation();
             operation.setName(clsName+"::"+methodName);
             operation.setResponseType(currentMethodDeclaration.getType().toString());
-            List<String> paramsList = new ArrayList<>();
-            currentMethodDeclaration.getParameters().forEach(parameter ->
-                    paramsList.add(parameter.getTypeAsString()));
+
+            List<Parameter> paramsList = new ArrayList<>();
+
+            currentMethodDeclaration.getParameters().forEach(parameter -> {
+                Parameter parameter1 = new Parameter();
+                parameter1.setName(parameter.getNameAsString());
+                parameter1.setType(parameter.getTypeAsString());
+
+                paramsList.add(parameter1);
+            });
+
             operation.setParamList(paramsList);
 
             List<String> usingTypes = new ArrayList<>();

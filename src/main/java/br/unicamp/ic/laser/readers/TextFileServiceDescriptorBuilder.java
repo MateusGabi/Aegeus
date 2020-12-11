@@ -1,9 +1,6 @@
 package br.unicamp.ic.laser.readers;
 
-import br.unicamp.ic.laser.model.IServiceDescriptorBuilder;
-import br.unicamp.ic.laser.model.Operation;
-import br.unicamp.ic.laser.model.ServiceDescriptor;
-import br.unicamp.ic.laser.model.Statements;
+import br.unicamp.ic.laser.model.*;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -42,7 +39,10 @@ public class TextFileServiceDescriptorBuilder implements IServiceDescriptorBuild
                                 serviceDescriptor.getServiceOperations().add(operation);
                                 break;
                             case OPERATION_PARAM:
-                                serviceDescriptor.getServiceOperations().get(arrayOfOperationsIndex.size() - 1).getParamList().add(statement);
+                                Parameter parameter = new Parameter();
+                                parameter.setName("UNKNOWN NAME");
+                                parameter.setType(statement);
+                                serviceDescriptor.getServiceOperations().get(arrayOfOperationsIndex.size() - 1).getParamList().add(parameter);
                                 break;
                             case OPERATION_USE_OF_TYPE:
                                 serviceDescriptor.getServiceOperations().get(arrayOfOperationsIndex.size() - 1).getUsingTypesList().add(statement);

@@ -2,6 +2,7 @@ package br.unicamp.ic.laser.metrics;
 
 import br.unicamp.ic.laser.model.IServiceDescriptor;
 import br.unicamp.ic.laser.model.Operation;
+import br.unicamp.ic.laser.model.Parameter;
 import br.unicamp.ic.laser.utils.Utils;
 
 import java.util.ArrayList;
@@ -63,13 +64,17 @@ public class LackOfMessageLevelCohesion extends AbstractMetric {
 
     public Double inputDataSimilarity(Operation firstOperation, Operation secondOperation) {
         HashSet<String> unionOfProperties = new HashSet<>();
-        unionOfProperties.addAll(firstOperation.getParamList());
-        unionOfProperties.addAll(secondOperation.getParamList());
+
+        List<String> firstOperationParameterNames = Parameter.getParameterNames(firstOperation.getParamList());
+        List<String> secondOperationParameterNames = Parameter.getParameterNames(secondOperation.getParamList());
+
+        unionOfProperties.addAll(firstOperationParameterNames);
+        unionOfProperties.addAll(secondOperationParameterNames);
 
         int sizeOfUnionOfProperties = unionOfProperties.size();
 
-        List<String> commonProperties = firstOperation.getParamList().stream()
-                .filter(secondOperation.getParamList()::contains).collect(Collectors.toList());
+        List<String> commonProperties = firstOperationParameterNames.stream()
+                .filter(secondOperationParameterNames::contains).collect(Collectors.toList());
 
         double inputDataSimilarity = commonProperties.size() / (sizeOfUnionOfProperties * 1.0);
 

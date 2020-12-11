@@ -2,6 +2,7 @@ package br.unicamp.ic.laser.metrics;
 
 import br.unicamp.ic.laser.model.IServiceDescriptor;
 import br.unicamp.ic.laser.model.Operation;
+import br.unicamp.ic.laser.model.Parameter;
 import br.unicamp.ic.laser.model.ServiceDescriptor;
 import br.unicamp.ic.laser.utils.Utils;
 
@@ -25,6 +26,9 @@ public class ServiceInterfaceDataCohesion extends AbstractMetric {
     }
 
     @Override
+    /**
+     * TODO: refactor! It is a mess
+     */
     public void evaluate() {
         IServiceDescriptor serviceDescriptor = this.getServiceDescriptor();
 
@@ -56,7 +60,7 @@ public class ServiceInterfaceDataCohesion extends AbstractMetric {
 
             // pairs of operations
             int intersectTypesSize = Utils
-                    .pairs(serviceDescriptor.getServiceOperations().stream().map(o -> o.getParamList()).collect(Collectors.toList())).stream()
+                    .pairs(serviceDescriptor.getServiceOperations().stream().map(o -> Parameter.getParameterTypes(o.getParamList())).collect(Collectors.toList())).stream()
                     .map((pair) -> {
                         List<String> typesIntoFirstOperation = pair.get(0);
                         List<String> typesIntoSecondOperation = pair.get(1);

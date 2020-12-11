@@ -1,9 +1,6 @@
 package br.unicamp.ic.laser.readers;
 
-import br.unicamp.ic.laser.model.IServiceDescriptor;
-import br.unicamp.ic.laser.model.IServiceDescriptorBuilder;
-import br.unicamp.ic.laser.model.Operation;
-import br.unicamp.ic.laser.model.ServiceDescriptor;
+import br.unicamp.ic.laser.model.*;
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.MethodDeclaration;
@@ -59,8 +56,14 @@ public class JavaGrpcReflectionServiceDescriptorBuilder implements IServiceDescr
             Operation operation = new Operation();
             operation.setName(clsName+"::"+methodName);
             operation.setResponseType(currentMethodDeclaration.getParameter(1).getTypeAsString());
-            List<String> paramsList = new ArrayList<>();
-            paramsList.add(currentMethodDeclaration.getParameter(0).getTypeAsString());
+
+            List<Parameter> paramsList = new ArrayList<>();
+
+            Parameter parameter = new Parameter();
+            parameter.setType(currentMethodDeclaration.getParameter(0).getTypeAsString());
+            parameter.setName(currentMethodDeclaration.getParameter(0).getNameAsString());
+
+            paramsList.add(parameter);
             operation.setParamList(paramsList);
 
             List<String> usingTypes = new ArrayList<>();
