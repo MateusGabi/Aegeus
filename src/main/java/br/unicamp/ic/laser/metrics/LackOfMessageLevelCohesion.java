@@ -4,8 +4,9 @@ import br.unicamp.ic.laser.model.IServiceDescriptor;
 import br.unicamp.ic.laser.model.Operation;
 import br.unicamp.ic.laser.utils.Utils;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class LackOfMessageLevelCohesion extends AbstractMetric {
@@ -34,61 +35,52 @@ public class LackOfMessageLevelCohesion extends AbstractMetric {
             // do nothing
         }
 
-        else  {
-            // set of all operations type
-            long totalOfParamsType = serviceDescriptor.getServiceOperations()
-                    .stream()
-                    .map(o -> o.getParamList())
-                    .filter(Objects::nonNull)
-                    .flatMap(types -> types.stream())
-                    .distinct()
-                    .count();
+        else {
+            List<Operation> operations = serviceDescriptor.getServiceOperations();
+            ArrayList<ArrayList<Operation>> operationPairs = Utils.pairs(operations);
 
-            // pairs of operations
-            int intersectTypesSize = Utils
-                    .pairs(serviceDescriptor.getServiceOperations().stream().map(o -> o.getParamList()).collect(Collectors.toList())).stream()
-                    .map((pair) -> {
-                        List<String> typesIntoFirstOperation = pair.get(0);
-                        List<String> typesIntoSecondOperation = pair.get(1);
+            int numberOfPairs = operationPairs.size();
 
-                        List<String> intersectElements = typesIntoFirstOperation.stream()
-                                .filter(typesIntoSecondOperation::contains).collect(Collectors.toList());
+            ArrayList<Double> operationSimilarityList = new ArrayList<>();
+            for (ArrayList<Operation> pair : operationPairs) {
+                Operation firstOperation = pair.get(0);
+                Operation secondOperation = pair.get(1);
 
-                        return intersectElements;
-                    }).flatMap(types -> types.stream())
-                    .collect(Collectors.toSet()).size();
+                double operationSimilarity = (inputDataSimilarity(firstOperation, secondOperation) +
+                        outputDataSimilarity(firstOperation, secondOperation)) / 2;
 
-            double inputDataSimilarity = intersectTypesSize / (totalOfParamsType * 1.0);
+                operationSimilarityList.add(operationSimilarity);
+            }
 
-            // calculate outputDataSimilarity
-            // set of all operations type
-            long totalOfOutputType = serviceDescriptor.getServiceOperations()
-                    .stream()
-                    .map(o -> o.getResponseType())
-                    .filter(Objects::nonNull)
-                    .distinct()
-                    .count();
+            double acc = 0.0;
+            for (Double similarity : operationSimilarityList) {
+                acc = acc + (1 - similarity);
+            }
 
-            // pairs of operations
-            int intersectOutputTypesSize = Utils
-                    .pairs(serviceDescriptor.getServiceOperations().stream().map(o -> o.getResponseType()).collect(Collectors.toList())).stream()
-                    .map((pair) -> {
-                        String response1 = pair.get(0);
-                        String response2 = pair.get(1);
-
-                        if (response1.equals(response2)) {
-                            return response1;
-                        }
-
-                        return null;
-                    })
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toSet())
-                    .size();
-
-            double outputDataSimilarity = intersectOutputTypesSize / (totalOfOutputType * 1.0);
-
-            this.getResult().setMetricValue(inputDataSimilarity + outputDataSimilarity);
+            this.getResult().setMetricValue(acc / numberOfPairs);
         }
+    }
+
+    public Double inputDataSimilarity(Operation firstOperation, Operation secondOperation) {
+        HashSet<String> unionOfProperties = new HashSet<>();
+        unionOfProperties.addAll(firstOperation.getParamList());
+        unionOfProperties.addAll(secondOperation.getParamList());
+
+        int sizeOfUnionOfProperties = unionOfProperties.size();
+
+        List<String> commonProperties = firstOperation.getParamList().stream()
+                .filter(secondOperation.getParamList()::contains).collect(Collectors.toList());
+
+        double inputDataSimilarity = commonProperties.size() / (sizeOfUnionOfProperties * 1.0);
+
+        return inputDataSimilarity;
+    }
+
+    public Double outputDataSimilarity(Operation firstOperation, Operation secondOperation) {
+        HashSet<String> unionOfProperties = new HashSet<>();
+        unionOfProperties.add(firstOperation.getResponseType());
+        unionOfProperties.add(secondOperation.getResponseType());
+
+        return unionOfProperties.size() == 1 ? 1.0 : 0.0;
     }
 }
