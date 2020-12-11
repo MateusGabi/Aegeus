@@ -1,6 +1,7 @@
 package br.unicamp.ic.laser.metrics;
 
 import br.unicamp.ic.laser.model.Operation;
+import br.unicamp.ic.laser.model.Parameter;
 import br.unicamp.ic.laser.model.ServiceDescriptor;
 import org.junit.Assert;
 import org.junit.Test;
@@ -21,11 +22,17 @@ public class ServiceInterfaceDataCohesionTest {
     public void should_calc_two_services() {
         Operation operationA = new Operation();
         operationA.setName("Operation A");
-        operationA.setParamList(Arrays.asList("*String", "*Double"));
+        Parameter parameterA1 = new Parameter();
+        parameterA1.setType("*String");
+        Parameter parameterA2 = new Parameter();
+        parameterA2.setType("*Double");
+        operationA.setParamList(Arrays.asList(parameterA1, parameterA2));
 
         Operation operationB = new Operation();
         operationB.setName("Operation B");
-        operationB.setParamList(Arrays.asList("*String"));
+        Parameter parameterB1 = new Parameter();
+        parameterB1.setType("*String");
+        operationB.setParamList(Arrays.asList(parameterB1));
 
         ServiceDescriptor serviceDescriptor = new ServiceDescriptor("Service A", Arrays.asList(operationA, operationB));
 

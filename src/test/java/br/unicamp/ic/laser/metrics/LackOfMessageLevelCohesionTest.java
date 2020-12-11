@@ -1,6 +1,7 @@
 package br.unicamp.ic.laser.metrics;
 
 import br.unicamp.ic.laser.model.Operation;
+import br.unicamp.ic.laser.model.Parameter;
 import br.unicamp.ic.laser.model.ServiceDescriptor;
 import org.junit.Assert;
 import org.junit.Test;
@@ -24,21 +25,23 @@ public class LackOfMessageLevelCohesionTest {
     public void example_of_locmes_from_RAMACLI_should_input_data_similarity() {
         Operation operationA = new Operation();
         operationA.setName("/pets");
-        operationA.setParamList(Arrays.asList("limit"));
+        Parameter parameter = new Parameter();
+        parameter.setName("limit");
+        operationA.setParamList(Arrays.asList(parameter));
 
         Operation operationB = new Operation();
         operationB.setName("/pets/{age}");
-        operationB.setParamList(Arrays.asList("limit", "age"));
+        Parameter parameter1 = new Parameter();
+        parameter1.setName("limit");
 
-//        ServiceDescriptor serviceDescriptor = new ServiceDescriptor("Service A", Arrays.asList(operationA, operationB));
-//
+        Parameter parameter2 = new Parameter();
+        parameter2.setName("age");
+        operationB.setParamList(Arrays.asList(parameter1, parameter2));
+
         LackOfMessageLevelCohesion instance = new LackOfMessageLevelCohesion();
-//        instance.setServiceDescriptor(serviceDescriptor);
-//        instance.evaluate();
 
         double inputDataSimilarity = instance.inputDataSimilarity(operationA, operationB);
 
-//        Assert.assertNotNull(instance.getResult());
         Assert.assertEquals(0.5, inputDataSimilarity, 0.0);
     }
 
@@ -70,14 +73,20 @@ public class LackOfMessageLevelCohesionTest {
         Operation operationA = new Operation();
         operationA.setName("/pets");
         operationA.setResponseType("Pet");
-        operationA.setParamList(Arrays.asList("limit"));
+        Parameter parameter = new Parameter();
+        parameter.setName("limit");
+        operationA.setParamList(Arrays.asList(parameter));
 
 
         Operation operationB = new Operation();
         operationB.setName("/pets/{age}");
         operationB.setResponseType("Pet");
+        Parameter parameter1 = new Parameter();
+        parameter1.setName("limit");
 
-        operationB.setParamList(Arrays.asList("limit", "age"));
+        Parameter parameter2 = new Parameter();
+        parameter2.setName("age");
+        operationB.setParamList(Arrays.asList(parameter1, parameter2));
 
         ServiceDescriptor serviceDescriptor = new ServiceDescriptor("Service A", Arrays.asList(operationA, operationB));
 
