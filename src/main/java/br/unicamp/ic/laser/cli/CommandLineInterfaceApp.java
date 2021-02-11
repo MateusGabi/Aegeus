@@ -45,6 +45,10 @@ public class CommandLineInterfaceApp implements ICommandLineInterfaceApp {
             }
 
             // assess metrics
+            // Problema: Embora tenha controllers/interface kafka/grpc diferentes, eu tenho que analisar de forma
+            // "condensada" para que eu analise a interface do serviço como um todo;
+            // uma das formas é colocar uma flag que o usuário bota na linha de comando e essa flag seja informada em
+            // MatricCalculator::assess
             List<MetricResult> metricResults = new MetricCalculator().assess(serviceDescriptor);
 
             // export assessments

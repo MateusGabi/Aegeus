@@ -47,8 +47,10 @@ public class LackOfMessageLevelCohesion extends AbstractMetric {
                 Operation firstOperation = pair.get(0);
                 Operation secondOperation = pair.get(1);
 
-                double operationSimilarity = (inputDataSimilarity(firstOperation, secondOperation) +
-                        outputDataSimilarity(firstOperation, secondOperation)) / 2;
+                double iDS = inputDataSimilarity(firstOperation, secondOperation);
+                double oDS = outputDataSimilarity(firstOperation, secondOperation);
+
+                double operationSimilarity = ( iDS + oDS) / 2;
 
                 operationSimilarityList.add(operationSimilarity);
             }
@@ -76,7 +78,13 @@ public class LackOfMessageLevelCohesion extends AbstractMetric {
         List<String> commonProperties = firstOperationParameterNames.stream()
                 .filter(secondOperationParameterNames::contains).collect(Collectors.toList());
 
-        double inputDataSimilarity = commonProperties.size() / (sizeOfUnionOfProperties * 1.0);
+        int cps = commonProperties.size();
+
+        if (sizeOfUnionOfProperties == 0.0 && cps == 0) {
+            return 1.0;
+        }
+
+        double inputDataSimilarity = cps / (sizeOfUnionOfProperties * 1.0);
 
         return inputDataSimilarity;
     }
