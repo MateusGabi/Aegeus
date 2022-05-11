@@ -107,4 +107,39 @@ public class JavaSimpleServiceDescriptorBuilderTest {
 		assertEquals(1, usingTypesList.size());
 		assertEquals("FooSelector", usingTypesList.get(0));
 	}
+	
+	@Test
+	public void testShouldGenerateServiceDescriptorWithParams() throws IOException {
+		IServiceDescriptor serviceDescriptor = this.instance.build("src/test/resources/SpringWithParams.java");
+		
+		assertEquals("GCBController", serviceDescriptor.getServiceName());
+		assertEquals(2, serviceDescriptor.getServiceOperations().size());
+		
+		// FIRST OPERATION
+		Operation operation = serviceDescriptor.getServiceOperations().get(0); 
+		assertEquals("GCBController::getAs", operation.getName());
+		assertEquals("List<String>", operation.getResponseType());
+		
+		List<Parameter> params = operation.getParamList();
+		assertEquals(0, params.size());
+		
+		List<String> usingTypesList = operation.getUsingTypesList();
+		assertEquals(1, usingTypesList.size());
+		assertEquals("IS", usingTypesList.get(0));
+		
+		// SECOND OPERATION
+		operation = serviceDescriptor.getServiceOperations().get(1); 
+		assertEquals("GCBController::getGCBTs", operation.getName());
+		assertEquals("List<GCBT>", operation.getResponseType());
+		
+		params = operation.getParamList();
+		assertEquals(1, params.size());
+		assertEquals("account", params.get(0).getName());
+		assertEquals("String", params.get(0).getType());
+		
+		usingTypesList = operation.getUsingTypesList();
+		assertEquals(2, usingTypesList.size());
+		assertEquals("BS", usingTypesList.get(0));
+		assertEquals("String", usingTypesList.get(1));
+	}
 }
