@@ -29,7 +29,9 @@ public class JavaSimpleServiceDescriptorBuilder implements IServiceDescriptorBui
 
         StaticJavaParser.getConfiguration().setSymbolResolver(symbolSolver);
 
+        System.out.println("creating compilation unit");
         CompilationUnit compilationUnit = StaticJavaParser.parse(new File(filePath));
+        System.out.println("compilation unit created");
 
         String clsName = compilationUnit.getType(0).getName().toString();
         serviceDescriptor.setServiceName(clsName);
@@ -47,7 +49,9 @@ public class JavaSimpleServiceDescriptorBuilder implements IServiceDescriptorBui
 
             List<Parameter> paramsList = new ArrayList<>();
 
+            System.out.println("Getting parameters of " + clsName+"::"+methodName);
             currentMethodDeclaration.getParameters().forEach(parameter -> {
+                System.out.println("Parameter " + parameter.getNameAsString() + " of type " + parameter.getTypeAsString() + " has found.");
                 Parameter parameter1 = new Parameter();
                 parameter1.setName(parameter.getNameAsString());
                 parameter1.setType(parameter.getTypeAsString());
@@ -59,12 +63,15 @@ public class JavaSimpleServiceDescriptorBuilder implements IServiceDescriptorBui
 
             List<String> usingTypes = new ArrayList<>();
 
+            System.out.println("Getting types into method.");
             currentMethodDeclaration.findAll(NameExpr.class).forEach(ae -> {
                 try {
                     ResolvedType resolvedType = ae.calculateResolvedType();
+                    System.out.println("Type found: " + resolvedType.toString());
                     usingTypes.add(resolvedType.toString());
                 } catch (UnsolvedSymbolException ex) {
                     // ignore
+                    System.out.println("Ops! UnsolvedSymbolException.");
                     String[] splitedMessage = ex.getMessage().split(" ");
                     String[] blockedWords = new String[] { "Unsolved", "symbol", "in", ":", "Solving" };
                     Optional<String> a = Arrays.stream(splitedMessage).distinct().filter(it -> {
@@ -72,19 +79,26 @@ public class JavaSimpleServiceDescriptorBuilder implements IServiceDescriptorBui
                     }).findFirst();
 
                     if (a.isPresent()) {
+                        System.out.println("NAO SEIII " + a.get());
                         usingTypes.add(a.get());
                     }
+                } catch (RuntimeException runtimeException) {
+                    System.out.println("Runtime exception" + ae.getNameAsString());
                 }
             });
 
+            System.out.println("Setting types.");
             operation.setUsingTypesList(usingTypes);
 
             // last line
+            System.out.println("Setting operation.");
             operations.add(operation);
 
         }
+        System.out.println("Setting all operations.");
         serviceDescriptor.setServiceOperations(operations);
 
+        System.out.println("Service Descriptor ok!");
         return serviceDescriptor;
     }
 }

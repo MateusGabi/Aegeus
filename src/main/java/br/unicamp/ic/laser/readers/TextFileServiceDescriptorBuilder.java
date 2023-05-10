@@ -40,8 +40,10 @@ public class TextFileServiceDescriptorBuilder implements IServiceDescriptorBuild
                                 break;
                             case OPERATION_PARAM:
                                 Parameter parameter = new Parameter();
-                                parameter.setName("UNKNOWN NAME");
-                                parameter.setType(statement);
+                                String paramName = statement.replace("*", "").split(":")[0];
+                                String paramType = statement.replace("*", "").split(":")[1];
+                                parameter.setName(paramName);
+                                parameter.setType(paramType);
                                 serviceDescriptor.getServiceOperations().get(arrayOfOperationsIndex.size() - 1).getParamList().add(parameter);
                                 break;
                             case OPERATION_USE_OF_TYPE:
@@ -70,6 +72,8 @@ public class TextFileServiceDescriptorBuilder implements IServiceDescriptorBuild
             return Statements.OPERATION_PARAM;
         } else if (line.startsWith("service=")) {
             return Statements.SERVICE_NAME;
+        } else if (line.startsWith("-")) {
+            return Statements.OPERATION_OUTPUT;
         }
         return Statements.OPERATION_USE_OF_TYPE;
     }

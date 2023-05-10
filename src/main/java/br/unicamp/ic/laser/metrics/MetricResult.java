@@ -40,4 +40,9 @@ public class MetricResult {
     public void setMetricValue(Double metricValue) {
         this.metricValue = metricValue;
     }
+
+    @Override
+    public String toString() {
+        return "MetricResult(metricName=" + this.getMetricName() + ", metricValue=" + this.getMetricValue() + ")";
+    }
 }

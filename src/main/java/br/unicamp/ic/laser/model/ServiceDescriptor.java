@@ -2,6 +2,8 @@ package br.unicamp.ic.laser.model;
 
 import br.unicamp.ic.laser.readers.TextFileServiceDescriptorBuilder;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,82 +11,105 @@ import java.util.List;
 
 /**
  * Description on a SOA Service.
- *  
+ *
  * @author Mateus Gabi Moreira
  * @version 1.0.0
  */
 public class ServiceDescriptor implements IServiceDescriptor {
 
-	public static class Builder {
+    private String serviceName;
+    private String serviceVersion;
+    private List<Operation> serviceOperations;
 
-		private IServiceDescriptorBuilder serviceDescriptorBuilder;
+    // TODO: become protected
+    public ServiceDescriptor() {
+        this.serviceName = "UnkownService";
+        this.serviceOperations = new ArrayList<Operation>();
+    }
 
-		public Builder(IServiceDescriptorBuilder serviceDescriptorBuilder) {
-			this.serviceDescriptorBuilder = serviceDescriptorBuilder;
-		}
+    // TODO: become protected
+    public ServiceDescriptor(String name, List<Operation> operationsList) {
+        super();
+        this.serviceName = name;
+        this.serviceOperations = operationsList;
+    }
 
-		public Builder() {
-			this.serviceDescriptorBuilder = new TextFileServiceDescriptorBuilder();
-		}
+    @Override
+    public String getServiceName() {
+        return serviceName;
+    }
 
-		public IServiceDescriptor build(String file) throws IOException {
-			return this.serviceDescriptorBuilder.build(file);
-		}
-	}
+    @Override
+    public void setServiceName(String name) {
+        this.serviceName = name;
+    }
 
-	private String serviceName;
-	private String serviceVersion;
-	private List<Operation> serviceOperations;
+    @Override
+    public String getServiceVersion() {
+        return serviceVersion;
+    }
 
-	// TODO: become protected
-	public ServiceDescriptor() {
-		this.serviceName = "UnkownService";
-		this.serviceOperations = new ArrayList<Operation>();
-	}
+    @Override
+    public void setServiceVersion(String version) {
+        this.serviceVersion = version;
+    }
 
-	// TODO: become protected
-	public ServiceDescriptor(String name, List<Operation> operationsList) {
-		super();
-		this.serviceName = name;
-		this.serviceOperations = operationsList;
-	}
+    @Override
+    public List<Operation> getServiceOperations() {
+        return serviceOperations;
+    }
 
-	@Override
-	public String getServiceName() {
-		return serviceName;
-	}
+    @Override
+    public void setServiceOperations(List<Operation> serviceOperations) {
+        this.serviceOperations = serviceOperations;
+    }
 
-	@Override
-	public String getServiceVersion() {
-		return serviceVersion;
-	}
+    @Override
+    public void writeToMsd(String filename) {
+        System.out.println("Write .msd file: " + filename);
 
-	@Override
-	public List<Operation> getServiceOperations() {
-		return serviceOperations;
-	}
+        // open file and write it
+        File file = new File(filename);
+        FileWriter myWriter = null;
+        try {
+            if (file.createNewFile()) {
+                myWriter = new FileWriter(filename);
+                myWriter.write(this.toString());
+                myWriter.close();
+            } else {
+                // write bellow this file
+                myWriter = new FileWriter(filename, true);
+                myWriter.write("\n" + this);
+                myWriter.close();
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } finally {
+            System.out.println("Done.");
+        }
+    }
 
-	@Override
-	public void setServiceName(String name) {
-		this.serviceName = name;
-	}
+    @Override
+    public String toString() {
+        return "service=" + this.serviceName + "\n" +
+                this.serviceOperations.stream().map(Operation::toString).reduce("", (acc, op) -> acc + "operation=" + op + "\n");
+    }
 
-	@Override
-	public void setServiceVersion(String version) {
-		this.serviceVersion = version;
-	}
+    public static class Builder {
 
-	@Override
-	public void setServiceOperations(List<Operation> serviceOperations) {
-		this.serviceOperations = serviceOperations;
-	}
+        private final IServiceDescriptorBuilder serviceDescriptorBuilder;
 
-	@Override
-	public String toString() {
-		return "ServiceDescriptor{" +
-				"serviceName='" + serviceName + '\'' +
-				", serviceOperations=" + serviceOperations +
-				'}';
-	}
+        public Builder(IServiceDescriptorBuilder serviceDescriptorBuilder) {
+            this.serviceDescriptorBuilder = serviceDescriptorBuilder;
+        }
+
+        public Builder() {
+            this.serviceDescriptorBuilder = new TextFileServiceDescriptorBuilder();
+        }
+
+        public IServiceDescriptor build(String file) throws IOException {
+            return this.serviceDescriptorBuilder.build(file);
+        }
+    }
 }
 
