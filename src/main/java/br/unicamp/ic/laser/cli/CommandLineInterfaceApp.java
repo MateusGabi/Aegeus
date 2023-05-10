@@ -15,12 +15,33 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class CommandLineInterfaceApp implements ICommandLineInterfaceApp {
+    private static List<String> getParamsList(String[] params) {
+        // juntar se abrir diamond
+        List<String> paramsList = new ArrayList<>();
+        int countDiamondOpened = 0;
+        for (String param : params) {
+            if (param.contains("<")) {
+                paramsList.add(param);
+                countDiamondOpened++;
+            } else {
+                if (countDiamondOpened > 0) {
+                    paramsList.set(paramsList.size() - 1, paramsList.get(paramsList.size() - 1) + "," + param);
+                    countDiamondOpened--;
+                } else {
+                    paramsList.add(param);
+                }
+            }
+        }
+
+        paramsList = paramsList.stream().map(String::trim).collect(Collectors.toList());
+        return paramsList;
+    }
+
     @Override
     public void run(String[] args) {
 
@@ -50,18 +71,12 @@ public class CommandLineInterfaceApp implements ICommandLineInterfaceApp {
                 e.printStackTrace();
             }
 
-            // assess metrics
-            // Problema: Embora tenha controllers/interface kafka/grpc diferentes, eu tenho que analisar de forma
-            // "condensada" para que eu analise a interface do serviço como um todo;
-            // uma das formas é colocar uma flag que o usuário bota na linha de comando e essa flag seja informada em
-            // MatricCalculator::assess
             List<MetricResult> metricResults = new MetricCalculator().assess(serviceDescriptor);
 
             // export assessments
             new MetricsExporter().export(metricResults);
 
-        } else if (line.hasOption("writemsdescriptor") &&
-                line.hasOption("ms") && line.hasOption("p")) {
+        } else if (line.hasOption("writemsdescriptor") && line.hasOption("ms") && line.hasOption("p")) {
             System.out.println("Write Microservice Descriptor (.msd)\n");
 
             String parser = line.getOptionValue("p");
@@ -96,8 +111,6 @@ public class CommandLineInterfaceApp implements ICommandLineInterfaceApp {
                     String version = line1.replace(ms, "").split("/")[1];
                     System.out.println("Version: " + version);
 
-//                    if (!version.equals("master")) break;
-
                     IServiceDescriptor serviceDescriptor = serviceDescriptorBuilder.build(controllerPath);
                     serviceDescriptor.setServiceVersion(version);
 
@@ -109,17 +122,8 @@ public class CommandLineInterfaceApp implements ICommandLineInterfaceApp {
                 throw new RuntimeException(e);
             }
 
-//            IServiceDescriptor serviceDescriptor = null;
-//            try {
-//                serviceDescriptor = serviceDescriptorBuilder.build(filename);
-//                serviceDescriptor.setServiceVersion(version);
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
 
-        } else if (
-                line.hasOption("assessmetricsinmsa") &&
-                        line.hasOption("ms")) {
+        } else if (line.hasOption("assessmetricsinmsa") && line.hasOption("ms")) {
             System.out.println("Assess metrics in Microservice");
             String ms = line.getOptionValue("ms");
 
@@ -148,15 +152,20 @@ public class CommandLineInterfaceApp implements ICommandLineInterfaceApp {
                     Operation lastOperation = null;
                     for (String l : lines) {
                         if (l.startsWith("operation=")) {
+                            if (lastOperation != null) {
+                                serviceDescriptor.getServiceOperations().add(lastOperation);
+                            }
                             // new operation
                             Operation operation = new Operation();
                             operation.setName(l.replace("operation=", ""));
                             lastOperation = operation;
                         } else if (l.startsWith("params=")) {
                             // params da operação
-                            // TODO: diamonds não são suportados. Ex: Map<String, String>
-                            String[] params = l.replace("params=", "").split(",");
-                            for (String param : params) {
+                            String[] params = l.replace("params=", "").replace("[", "").replace("]", "").split(",");
+
+                            List<String> paramsList = getParamsList(params);
+
+                            for (String param : paramsList) {
                                 if (param.split(":").length != 2) {
                                     System.out.println("Invalid param: " + param);
                                     continue;
@@ -173,16 +182,26 @@ public class CommandLineInterfaceApp implements ICommandLineInterfaceApp {
                             lastOperation.setResponseType(l.replace("output=", ""));
                         } else if (l.startsWith("using-types=")) {
                             assert lastOperation != null;
-                            lastOperation.setUsingTypesList(Arrays.asList(l.replace("using-types=", "").split(",")));
+                            String[] usingTypesList = l.replace("using-types=", "").replace("[", "").replace("]", "").split(",");
+
+                            lastOperation.setUsingTypesList(getParamsList(usingTypesList));
                         }
+                    }
+
+                    // add last operation
+                    if (lastOperation != null) {
+                        serviceDescriptor.getServiceOperations().add(lastOperation);
+                        lastOperation = null;
                     }
 
                     List<MetricResult> metricResults = new MetricCalculator().assess(serviceDescriptor);
                     System.out.println(metricResults.stream().map(MetricResult::toString).collect(Collectors.joining("\n")));
 
-                    // escrever na parte de baixo do file .msd
+
+                    // escrever no arquivo de metric result .mr
+                    String mrFilename = msAnalysisPath + file.getName().replace(".msd", ".mr");
                     try {
-                        Files.write(file.toPath(), ("\n" + metricResults.stream().map(MetricResult::toString).collect(Collectors.joining("\n"))).getBytes(), StandardOpenOption.APPEND);
+                        Files.write(Paths.get(mrFilename), metricResults.stream().map(MetricResult::toString).collect(Collectors.joining("\n")).getBytes());
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
