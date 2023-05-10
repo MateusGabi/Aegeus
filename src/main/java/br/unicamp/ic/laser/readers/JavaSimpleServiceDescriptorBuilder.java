@@ -22,6 +22,11 @@ import java.util.Optional;
 public class JavaSimpleServiceDescriptorBuilder implements IServiceDescriptorBuilder {
     @Override
     public IServiceDescriptor build(String filePath) throws IOException {
+    	if (filePath == null || filePath == "") {
+    		throw new IOException("Filepath should not be null or empty.");
+    	}
+    	
+    	
         IServiceDescriptor serviceDescriptor = new ServiceDescriptor();
 
         TypeSolver typeSolver = new CombinedTypeSolver();
